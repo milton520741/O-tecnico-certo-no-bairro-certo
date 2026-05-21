@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TechniciansRouteImport } from './routes/technicians'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactoRouteImport } from './routes/contacto'
@@ -19,6 +20,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const TechniciansRoute = TechniciansRouteImport.update({
   id: '/technicians',
   path: '/technicians',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlanosRoute = PlanosRouteImport.update({
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/contacto': typeof ContactoRoute
   '/dashboard': typeof DashboardRoute
   '/planos': typeof PlanosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/contacto': typeof ContactoRoute
   '/dashboard': typeof DashboardRoute
   '/planos': typeof PlanosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/contacto': typeof ContactoRoute
   '/dashboard': typeof DashboardRoute
   '/planos': typeof PlanosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
 }
 export interface FileRouteTypes {
@@ -80,9 +89,17 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/dashboard'
     | '/planos'
+    | '/sitemap.xml'
     | '/technicians'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/contacto' | '/dashboard' | '/planos' | '/technicians'
+  to:
+    | '/'
+    | '/auth'
+    | '/contacto'
+    | '/dashboard'
+    | '/planos'
+    | '/sitemap.xml'
+    | '/technicians'
   id:
     | '__root__'
     | '/'
@@ -90,6 +107,7 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/dashboard'
     | '/planos'
+    | '/sitemap.xml'
     | '/technicians'
   fileRoutesById: FileRoutesById
 }
@@ -99,6 +117,7 @@ export interface RootRouteChildren {
   ContactoRoute: typeof ContactoRoute
   DashboardRoute: typeof DashboardRoute
   PlanosRoute: typeof PlanosRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TechniciansRoute: typeof TechniciansRoute
 }
 
@@ -109,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/technicians'
       fullPath: '/technicians'
       preLoaderRoute: typeof TechniciansRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/planos': {
@@ -155,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactoRoute: ContactoRoute,
   DashboardRoute: DashboardRoute,
   PlanosRoute: PlanosRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TechniciansRoute: TechniciansRoute,
 }
 export const routeTree = rootRouteImport
