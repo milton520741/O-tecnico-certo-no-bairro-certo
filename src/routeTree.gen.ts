@@ -16,6 +16,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as DashboardPortfolioRouteImport } from './routes/dashboard.portfolio'
 import { Route as DashboardPerfilRouteImport } from './routes/dashboard.perfil'
 import { Route as DashboardComprovativoRouteImport } from './routes/dashboard.comprovativo'
@@ -55,6 +56,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardPortfolioRoute = DashboardPortfolioRouteImport.update({
   id: '/portfolio',
   path: '/portfolio',
@@ -82,18 +88,19 @@ export interface FileRoutesByFullPath {
   '/dashboard/comprovativo': typeof DashboardComprovativoRoute
   '/dashboard/perfil': typeof DashboardPerfilRoute
   '/dashboard/portfolio': typeof DashboardPortfolioRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/planos': typeof PlanosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
   '/dashboard/comprovativo': typeof DashboardComprovativoRoute
   '/dashboard/perfil': typeof DashboardPerfilRoute
   '/dashboard/portfolio': typeof DashboardPortfolioRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +114,7 @@ export interface FileRoutesById {
   '/dashboard/comprovativo': typeof DashboardComprovativoRoute
   '/dashboard/perfil': typeof DashboardPerfilRoute
   '/dashboard/portfolio': typeof DashboardPortfolioRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,18 +129,19 @@ export interface FileRouteTypes {
     | '/dashboard/comprovativo'
     | '/dashboard/perfil'
     | '/dashboard/portfolio'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/contacto'
-    | '/dashboard'
     | '/planos'
     | '/sitemap.xml'
     | '/technicians'
     | '/dashboard/comprovativo'
     | '/dashboard/perfil'
     | '/dashboard/portfolio'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/dashboard/comprovativo'
     | '/dashboard/perfil'
     | '/dashboard/portfolio'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -208,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/portfolio': {
       id: '/dashboard/portfolio'
       path: '/portfolio'
@@ -236,12 +253,14 @@ interface DashboardRouteChildren {
   DashboardComprovativoRoute: typeof DashboardComprovativoRoute
   DashboardPerfilRoute: typeof DashboardPerfilRoute
   DashboardPortfolioRoute: typeof DashboardPortfolioRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardComprovativoRoute: DashboardComprovativoRoute,
   DashboardPerfilRoute: DashboardPerfilRoute,
   DashboardPortfolioRoute: DashboardPortfolioRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
