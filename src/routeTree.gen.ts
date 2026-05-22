@@ -16,6 +16,9 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardPortfolioRouteImport } from './routes/dashboard.portfolio'
+import { Route as DashboardPerfilRouteImport } from './routes/dashboard.perfil'
+import { Route as DashboardComprovativoRouteImport } from './routes/dashboard.comprovativo'
 
 const TechniciansRoute = TechniciansRouteImport.update({
   id: '/technicians',
@@ -52,34 +55,58 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardPortfolioRoute = DashboardPortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardPerfilRoute = DashboardPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardComprovativoRoute = DashboardComprovativoRouteImport.update({
+  id: '/comprovativo',
+  path: '/comprovativo',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/planos': typeof PlanosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
+  '/dashboard/comprovativo': typeof DashboardComprovativoRoute
+  '/dashboard/perfil': typeof DashboardPerfilRoute
+  '/dashboard/portfolio': typeof DashboardPortfolioRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/planos': typeof PlanosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
+  '/dashboard/comprovativo': typeof DashboardComprovativoRoute
+  '/dashboard/perfil': typeof DashboardPerfilRoute
+  '/dashboard/portfolio': typeof DashboardPortfolioRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/planos': typeof PlanosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
+  '/dashboard/comprovativo': typeof DashboardComprovativoRoute
+  '/dashboard/perfil': typeof DashboardPerfilRoute
+  '/dashboard/portfolio': typeof DashboardPortfolioRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +118,9 @@ export interface FileRouteTypes {
     | '/planos'
     | '/sitemap.xml'
     | '/technicians'
+    | '/dashboard/comprovativo'
+    | '/dashboard/perfil'
+    | '/dashboard/portfolio'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +130,9 @@ export interface FileRouteTypes {
     | '/planos'
     | '/sitemap.xml'
     | '/technicians'
+    | '/dashboard/comprovativo'
+    | '/dashboard/perfil'
+    | '/dashboard/portfolio'
   id:
     | '__root__'
     | '/'
@@ -109,13 +142,16 @@ export interface FileRouteTypes {
     | '/planos'
     | '/sitemap.xml'
     | '/technicians'
+    | '/dashboard/comprovativo'
+    | '/dashboard/perfil'
+    | '/dashboard/portfolio'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   ContactoRoute: typeof ContactoRoute
-  DashboardRoute: typeof DashboardRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   PlanosRoute: typeof PlanosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TechniciansRoute: typeof TechniciansRoute
@@ -172,14 +208,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/portfolio': {
+      id: '/dashboard/portfolio'
+      path: '/portfolio'
+      fullPath: '/dashboard/portfolio'
+      preLoaderRoute: typeof DashboardPortfolioRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/perfil': {
+      id: '/dashboard/perfil'
+      path: '/perfil'
+      fullPath: '/dashboard/perfil'
+      preLoaderRoute: typeof DashboardPerfilRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/comprovativo': {
+      id: '/dashboard/comprovativo'
+      path: '/comprovativo'
+      fullPath: '/dashboard/comprovativo'
+      preLoaderRoute: typeof DashboardComprovativoRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
+
+interface DashboardRouteChildren {
+  DashboardComprovativoRoute: typeof DashboardComprovativoRoute
+  DashboardPerfilRoute: typeof DashboardPerfilRoute
+  DashboardPortfolioRoute: typeof DashboardPortfolioRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardComprovativoRoute: DashboardComprovativoRoute,
+  DashboardPerfilRoute: DashboardPerfilRoute,
+  DashboardPortfolioRoute: DashboardPortfolioRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   ContactoRoute: ContactoRoute,
-  DashboardRoute: DashboardRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   PlanosRoute: PlanosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TechniciansRoute: TechniciansRoute,
