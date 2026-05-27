@@ -1,11 +1,12 @@
 -- ============================================================
 -- ADMIN SYSTEM - Fixed Version (No Service Dependencies)
+-- Version: Idempotent (Safe to run multiple times)
 -- ============================================================
 
 -- ============================================================
 -- SUPER ADMIN TABLE
 -- ============================================================
-CREATE TABLE public.super_admins (
+CREATE TABLE IF NOT EXISTS public.super_admins (
     id BIGSERIAL PRIMARY KEY,
     user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -17,7 +18,7 @@ CREATE TABLE public.super_admins (
 -- ============================================================
 
 -- Admin Logs (auditoria)
-CREATE TABLE public.admin_logs (
+CREATE TABLE IF NOT EXISTS public.admin_logs (
     id BIGSERIAL PRIMARY KEY,
     admin_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE SET NULL,
     action TEXT NOT NULL,
@@ -31,7 +32,7 @@ CREATE TABLE public.admin_logs (
 );
 
 -- Admin Settings/Configurations
-CREATE TABLE public.admin_settings (
+CREATE TABLE IF NOT EXISTS public.admin_settings (
     id BIGSERIAL PRIMARY KEY,
     key TEXT NOT NULL UNIQUE,
     value JSONB NOT NULL,
@@ -41,7 +42,7 @@ CREATE TABLE public.admin_settings (
 );
 
 -- Service Categories
-CREATE TABLE public.service_categories (
+CREATE TABLE IF NOT EXISTS public.service_categories (
     id BIGSERIAL PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
     slug TEXT NOT NULL UNIQUE,
@@ -55,7 +56,7 @@ CREATE TABLE public.service_categories (
 );
 
 -- Admin Notifications
-CREATE TABLE public.admin_notifications (
+CREATE TABLE IF NOT EXISTS public.admin_notifications (
     id BIGSERIAL PRIMARY KEY,
     admin_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     type TEXT NOT NULL,
@@ -69,7 +70,7 @@ CREATE TABLE public.admin_notifications (
 );
 
 -- User Reports/Issues
-CREATE TABLE public.user_reports (
+CREATE TABLE IF NOT EXISTS public.user_reports (
     id BIGSERIAL PRIMARY KEY,
     reporter_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     reported_user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -84,7 +85,7 @@ CREATE TABLE public.user_reports (
 );
 
 -- Admin Dashboard Widgets Configuration
-CREATE TABLE public.admin_dashboard_config (
+CREATE TABLE IF NOT EXISTS public.admin_dashboard_config (
     id BIGSERIAL PRIMARY KEY,
     admin_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     widget_type TEXT NOT NULL,
@@ -276,15 +277,15 @@ $$;
 -- ============================================================
 -- INDEXES
 -- ============================================================
-CREATE INDEX idx_super_admins_user ON public.super_admins(user_id);
-CREATE INDEX idx_admin_logs_admin ON public.admin_logs(admin_id, created_at DESC);
-CREATE INDEX idx_admin_logs_action ON public.admin_logs(action, created_at DESC);
-CREATE INDEX idx_admin_logs_entity ON public.admin_logs(entity_type, entity_id);
-CREATE INDEX idx_service_categories_active ON public.service_categories(is_active) WHERE is_active = true;
-CREATE INDEX idx_admin_notifications_admin ON public.admin_notifications(admin_id, is_read DESC, created_at DESC);
-CREATE INDEX idx_admin_notifications_read ON public.admin_notifications(admin_id, is_read);
-CREATE INDEX idx_user_reports_status ON public.user_reports(status, created_at DESC);
-CREATE INDEX idx_user_reports_reported_user ON public.user_reports(reported_user_id);
+CREATE INDEX IF NOT EXISTS idx_super_admins_user ON public.super_admins(user_id);
+CREATE INDEX IF NOT EXISTS idx_admin_logs_admin ON public.admin_logs(admin_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_admin_logs_action ON public.admin_logs(action, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_admin_logs_entity ON public.admin_logs(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_service_categories_active ON public.service_categories(is_active) WHERE is_active = true;
+CREATE INDEX IF NOT EXISTS idx_admin_notifications_admin ON public.admin_notifications(admin_id, is_read DESC, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_admin_notifications_read ON public.admin_notifications(admin_id, is_read);
+CREATE INDEX IF NOT EXISTS idx_user_reports_status ON public.user_reports(status, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_user_reports_reported_user ON public.user_reports(reported_user_id);
 
 -- ============================================================
 -- ENABLE RLS ON NEW TABLES
@@ -301,52 +302,68 @@ ALTER TABLE public.admin_dashboard_config ENABLE ROW LEVEL SECURITY;
 -- RLS POLICIES FOR ADMIN TABLES
 -- ============================================================
 
+DROP POLICY IF EXISTS "super_admins admin read" ON public.super_admins;
 CREATE POLICY "super_admins admin read" ON public.super_admins FOR SELECT
 USING (public.is_admin_or_higher(auth.uid()));
 
+DROP POLICY IF EXISTS "admin_logs admin read" ON public.admin_logs;
 CREATE POLICY "admin_logs admin read" ON public.admin_logs FOR SELECT
 USING (public.is_admin_or_higher(auth.uid()));
 
+DROP POLICY IF EXISTS "admin_settings public read" ON public.admin_settings;
 CREATE POLICY "admin_settings public read" ON public.admin_settings FOR SELECT
 USING (true);
 
+DROP POLICY IF EXISTS "admin_settings super_admin manage" ON public.admin_settings;
 CREATE POLICY "admin_settings super_admin manage" ON public.admin_settings FOR ALL
 USING (public.is_super_admin(auth.uid()))
 WITH CHECK (public.is_super_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "service_categories public read" ON public.service_categories;
 CREATE POLICY "service_categories public read" ON public.service_categories FOR SELECT
 USING (is_active = true OR public.is_admin_or_higher(auth.uid()));
 
+DROP POLICY IF EXISTS "service_categories admin manage" ON public.service_categories;
 CREATE POLICY "service_categories admin manage" ON public.service_categories FOR ALL
 USING (public.is_admin_or_higher(auth.uid()))
 WITH CHECK (public.is_admin_or_higher(auth.uid()));
 
+DROP POLICY IF EXISTS "admin_notifications read own" ON public.admin_notifications;
 CREATE POLICY "admin_notifications read own" ON public.admin_notifications FOR SELECT
 USING (auth.uid() = admin_id OR public.is_super_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "admin_notifications update own" ON public.admin_notifications;
 CREATE POLICY "admin_notifications update own" ON public.admin_notifications FOR UPDATE
 USING (auth.uid() = admin_id)
 WITH CHECK (auth.uid() = admin_id);
 
+DROP POLICY IF EXISTS "admin_notifications delete own" ON public.admin_notifications;
 CREATE POLICY "admin_notifications delete own" ON public.admin_notifications FOR DELETE
 USING (auth.uid() = admin_id OR public.is_super_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "user_reports admin read" ON public.user_reports;
 CREATE POLICY "user_reports admin read" ON public.user_reports FOR SELECT
 USING (public.is_admin_or_higher(auth.uid()));
 
+DROP POLICY IF EXISTS "user_reports user insert" ON public.user_reports;
 CREATE POLICY "user_reports user insert" ON public.user_reports FOR INSERT
 WITH CHECK (reporter_id = auth.uid() OR reporter_id IS NULL);
 
+DROP POLICY IF EXISTS "user_reports admin manage" ON public.user_reports;
 CREATE POLICY "user_reports admin manage" ON public.user_reports FOR UPDATE
 USING (public.is_admin_or_higher(auth.uid()))
 WITH CHECK (public.is_admin_or_higher(auth.uid()));
 
+DROP POLICY IF EXISTS "admin_dashboard_config own" ON public.admin_dashboard_config;
 CREATE POLICY "admin_dashboard_config own" ON public.admin_dashboard_config FOR ALL
 USING (auth.uid() = admin_id)
 WITH CHECK (auth.uid() = admin_id);
 
 DROP POLICY IF EXISTS "payment_proofs owner read" ON public.payment_proofs;
 DROP POLICY IF EXISTS "payment_proofs admin all" ON public.payment_proofs;
+DROP POLICY IF EXISTS "payment_proofs owner insert" ON public.payment_proofs;
+DROP POLICY IF EXISTS "payment_proofs admin manage" ON public.payment_proofs;
+DROP POLICY IF EXISTS "payment_proofs admin delete" ON public.payment_proofs;
 
 CREATE POLICY "payment_proofs owner read" ON public.payment_proofs FOR SELECT
 USING (auth.uid() = owner_id OR public.is_admin_or_higher(auth.uid()));
