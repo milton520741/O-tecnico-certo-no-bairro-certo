@@ -9,7 +9,9 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "setup:admin": "node setup-admin-simple.js",
+    "setup:admin:ts": "npx ts-node setup-admin.js"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
