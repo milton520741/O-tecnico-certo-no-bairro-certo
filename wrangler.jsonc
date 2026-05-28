@@ -1,7 +1,21 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tanstack-start-app",
+  "name": "tecnico-certo",
+  "main": "src/server.ts",
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
-  "main": "src/server.ts",
+  "env": {
+    "production": {
+      "name": "tecnico-certo-prod"
+    },
+    "staging": {
+      "name": "tecnico-certo-staging"
+    }
+  },
+  "routes": [
+    {
+      "pattern": "tecnico-certo.workers.dev/*",
+      "zone_name": "workers.dev"
+    }
+  ]
 }
