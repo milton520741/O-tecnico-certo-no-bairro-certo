@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, ShieldCheck, Sparkles, MapPin, Users, Star, ArrowRight, Zap, Wrench, Hammer } from "lucide-react";
 import heroImg from "@/assets/hero-technician.jpg";
 import { BRAND } from "@/lib/constants";
+import { PremiumDashboards } from "@/components/PremiumDashboards";
 
 interface Option { id: number; name: string; slug: string }
 
@@ -145,6 +146,9 @@ function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* PREMIUM DASHBOARDS */}
+      <PremiumDashboards />
 
       {/* CTA */}
       <section className="container mx-auto px-4 pb-16">
