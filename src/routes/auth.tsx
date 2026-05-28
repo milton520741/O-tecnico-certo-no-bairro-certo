@@ -102,28 +102,59 @@ function SignupForm() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!name.trim()) return toast.error("Nome é obrigatório");
+    if (!email.trim()) return toast.error("Email é obrigatório");
     if (password.length < 8) return toast.error("Palavra-passe mínima de 8 caracteres");
+    
     setLoading(true);
-    const redirectUrl = `${window.location.origin}/dashboard`;
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: redirectUrl, data: { full_name: name, role } },
-    });
-    if (error) { setLoading(false); return toast.error(error.message); }
-    const uid = data.user?.id;
-    if (uid) {
-      // create role
-      await supabase.from("user_roles").insert({ user_id: uid, role });
-      // create matching profile row
-      if (role === "technician") {
-        await supabase.from("technicians").insert({ id: uid, full_name: name });
-      } else {
-        await supabase.from("companies").insert({ id: uid, company_name: name });
+    try {
+      const redirectUrl = `${window.location.origin}/dashboard`;
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: redirectUrl, data: { full_name: name, role } },
+      });
+
+      if (error) {
+        setLoading(false);
+        // Handle rate limiting specifically
+        if (error.message.includes("rate limit")) {
+          return toast.error("Limite de tentativas atingido. Tenta de novo em alguns minutos.");
+        }
+        if (error.message.includes("already registered")) {
+          return toast.error("Este email já está registado. Tenta entrar ou recupera a palavra-passe.");
+        }
+        return toast.error(error.message);
       }
+
+      const uid = data.user?.id;
+      if (uid) {
+        try {
+          // create role
+          await supabase.from("user_roles").insert({ user_id: uid, role });
+          // create matching profile row
+          if (role === "technician") {
+            await supabase.from("technicians").insert({ id: uid, full_name: name });
+          } else {
+            await supabase.from("companies").insert({ id: uid, company_name: name });
+          }
+        } catch (dbError) {
+          console.error("Database error:", dbError);
+          // Even if profile creation fails, account was created
+        }
+      }
+      
+      setLoading(false);
+      toast.success("Conta criada! Verifica o teu email para confirmar.");
+      // Clear form
+      setEmail("");
+      setPassword("");
+      setName("");
+    } catch (err) {
+      setLoading(false);
+      console.error("Signup error:", err);
+      toast.error("Erro ao criar conta. Tenta de novo.");
     }
-    setLoading(false);
-    toast.success("Conta criada! Verifica o teu email se necessário.");
   }
 
   return (
@@ -143,19 +174,46 @@ function SignupForm() {
       </div>
       <div>
         <Label htmlFor="name">{role === "technician" ? "Nome completo" : "Nome da empresa"}</Label>
-        <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} maxLength={120} />
+        <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} maxLength={120} placeholder="Seu nome aqui" />
+        {name.length > 0 && name.length < 3 && <p className="mt-1 text-xs text-yellow-600">Mínimo 3 caracteres</p>}
       </div>
       <div>
         <Label htmlFor="email-s">Email</Label>
-        <Input id="email-s" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
+        <Input 
+          id="email-s" 
+          type="email" 
+          required 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+          autoComplete="email"
+          placeholder="seu@email.com"
+        />
+        {email.length > 0 && !email.includes("@") && <p className="mt-1 text-xs text-yellow-600">Email deve ser válido</p>}
       </div>
       <div>
         <Label htmlFor="password-s">Palavra-passe (mín. 8 caracteres)</Label>
-        <Input id="password-s" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" />
+        <Input 
+          id="password-s" 
+          type="password" 
+          required 
+          minLength={8} 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+          autoComplete="new-password"
+          placeholder="••••••••"
+        />
+        {password.length > 0 && password.length < 8 && <p className="mt-1 text-xs text-yellow-600">{password.length}/8 caracteres</p>}
       </div>
-      <Button type="submit" className="w-full bg-gradient-primary text-primary-foreground" disabled={loading}>
+      <Button 
+        type="submit" 
+        className="w-full bg-gradient-primary text-primary-foreground" 
+        disabled={loading || !name.trim() || !email.includes("@") || password.length < 8}
+      >
         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Criar conta
       </Button>
+      <p className="text-center text-xs text-muted-foreground">
+        Já tens conta? <Link to="/auth" className="text-accent hover:underline">Entrar aqui</Link>
+      </p>
     </form>
   );
 }

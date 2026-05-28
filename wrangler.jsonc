@@ -4,18 +4,21 @@
   "main": "src/server.ts",
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "NODE_ENV": "production"
+  },
   "env": {
     "production": {
-      "name": "tecnico-certo-prod"
+      "name": "tecnico-certo-prod",
+      "vars": {
+        "NODE_ENV": "production"
+      }
     },
     "staging": {
-      "name": "tecnico-certo-staging"
+      "name": "tecnico-certo-staging",
+      "vars": {
+        "NODE_ENV": "staging"
+      }
     }
-  },
-  "routes": [
-    {
-      "pattern": "tecnico-certo.workers.dev/*",
-      "zone_name": "workers.dev"
-    }
-  ]
+  }
 }
