@@ -89,11 +89,17 @@ function ComprovativoPage() {
       });
       if (pErr) throw pErr;
 
-      toast.success("Comprovativo enviado! Aguarda aprovação do admin.");
+      toast.success("Comprovativo enviado! A abrir WhatsApp...");
       setFile(null);
       setNote("");
       const { data } = await supabase.from("payment_proofs").select("id,created_at,plan,reviewed,note").eq("owner_id", user.id).order("created_at", { ascending: false });
       setHistory(data ?? []);
+
+      // Automatically notify via WhatsApp after successful upload
+      setTimeout(() => {
+        const whatsappLink = whatsappUrl(CONTACT.ownerWhatsapp, buildActivationMessage(user.email ?? "", plan));
+        window.open(whatsappLink, "_blank", "noopener,noreferrer");
+      }, 800);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erro ao enviar");
     } finally {
@@ -157,12 +163,7 @@ function ComprovativoPage() {
         <div className="flex flex-wrap gap-3">
           <Button onClick={submit} disabled={submitting || !file} className="bg-gradient-primary text-primary-foreground">
             {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
-            Enviar comprovativo
-          </Button>
-          <Button asChild variant="outline">
-            <a href={whatsappUrl(CONTACT.ownerWhatsapp, buildActivationMessage(user.email ?? "", plan))} target="_blank" rel="noreferrer">
-              Avisar via WhatsApp
-            </a>
+            Enviar e notificar via WhatsApp
           </Button>
         </div>
       </Card>

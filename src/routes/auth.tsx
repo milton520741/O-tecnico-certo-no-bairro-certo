@@ -63,6 +63,8 @@ function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const search = Route.useSearch();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -71,6 +73,7 @@ function LoginForm() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Sessão iniciada");
+    navigate({ to: search.redirect || "/dashboard" });
   }
 
   return (
@@ -82,12 +85,15 @@ function LoginForm() {
       <div>
         <Label htmlFor="password">Palavra-passe</Label>
         <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
+        <Button asChild variant="link" size="sm" className="mt-2 h-auto p-0 text-xs">
+          <Link to="/auth/recover">Esqueceu a palavra-passe?</Link>
+        </Button>
       </div>
       <Button type="submit" className="w-full bg-gradient-primary text-primary-foreground" disabled={loading}>
         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Entrar
       </Button>
       <p className="text-center text-xs text-muted-foreground">
-        Ainda não tens conta? <Link to="/planos" className="text-accent hover:underline">Vê os planos</Link>
+        Ainda não tens conta? <Link to="/auth?mode=signup" className="text-accent hover:underline">Cadastra-te aqui</Link>
       </p>
     </form>
   );
@@ -145,11 +151,13 @@ function SignupForm() {
       }
       
       setLoading(false);
-      toast.success("Conta criada! Verifica o teu email para confirmar.");
-      // Clear form
+      toast.success("Conta criada! A preencher o teu perfil...");
       setEmail("");
       setPassword("");
       setName("");
+      setTimeout(() => {
+        window.location.href = '/dashboard/perfil';
+      }, 800);
     } catch (err) {
       setLoading(false);
       console.error("Signup error:", err);

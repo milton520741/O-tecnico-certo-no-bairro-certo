@@ -55,24 +55,51 @@ function TechniciansPage() {
     let cancelled = false;
     (async () => {
       setLoading(true);
+
+      const zoneId = search.zone ? zones.find((item) => item.slug === search.zone)?.id : undefined;
+      const serviceId = search.service ? services.find((item) => item.slug === search.service)?.id : undefined;
+      let allowedIds: string[] | undefined;
+
+      if (zoneId) {
+        const { data } = await supabase.from("technician_zones").select("technician_id").eq("zone_id", zoneId);
+        const ids = (data ?? []).map((row) => row.technician_id);
+        allowedIds = ids;
+      }
+
+      if (serviceId) {
+        const { data } = await supabase.from("technician_services").select("technician_id").eq("service_id", serviceId);
+        const ids = (data ?? []).map((row) => row.technician_id);
+        allowedIds = allowedIds ? allowedIds.filter((id) => ids.includes(id)) : ids;
+      }
+
+      if ((zoneId || serviceId) && allowedIds && allowedIds.length === 0) {
+        setTechs([]);
+        setLoading(false);
+        return;
+      }
+
       let q = supabase
         .from("technicians")
         .select("id, full_name, profile_photo_url, years_experience, is_verified, is_premium, bio")
         .eq("is_banned", false);
+
       if (search.verified === "1") q = q.eq("is_verified", true);
       if (search.premium === "1") q = q.eq("is_premium", true);
+      if (allowedIds && allowedIds.length > 0) q = q.in("id", allowedIds);
+
       const { data } = await q
         .order("is_premium", { ascending: false })
         .order("is_verified", { ascending: false })
         .order("created_at", { ascending: false })
         .limit(60);
+
       if (!cancelled) {
         setTechs((data ?? []) as Tech[]);
         setLoading(false);
       }
     })();
     return () => { cancelled = true; };
-  }, [search.verified, search.premium, search.zone, search.service]);
+  }, [search.verified, search.premium, search.zone, search.service, zones, services]);
 
   const setParam = (key: keyof SearchParams, value: string | undefined) => {
     navigate({ to: "/technicians", search: { ...search, [key]: value } as never });
@@ -158,8 +185,8 @@ function TechniciansPage() {
                   </div>
                 </div>
                 {t.bio && <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">{t.bio}</p>}
-                <Button asChild variant="outline" className="mt-4 w-full" disabled>
-                  <span>Ver perfil (Etapa 3)</span>
+                <Button asChild variant="outline" className="mt-4 w-full">
+                  <Link to={`/technician/${t.id}`}>Ver perfil</Link>
                 </Button>
               </Card>
             ))}

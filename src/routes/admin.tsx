@@ -38,7 +38,7 @@ function AdminLayout() {
       >
         {/* Header */}
         <div className="p-4 border-b flex items-center justify-between">
-          {sidebarOpen && <h1 className="font-bold text-lg">Admin</h1>}
+          {sidebarOpen && <h1 className="font-bold text-lg">MENU</h1>}
           <Button
             variant="ghost"
             size="icon"

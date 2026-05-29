@@ -31,9 +31,9 @@ $body = @{
     "enable_custom_smtp" = $true
 } | ConvertTo-Json -Depth 10
 
-Write-Host "🔧 Configurando SMTP do Brevo no Supabase..." -ForegroundColor Cyan
-Write-Host "📧 SMTP Host: $smtpHost" -ForegroundColor Gray
-Write-Host "🔑 User: $smtpUsername" -ForegroundColor Gray
+Write-Host "Configurando SMTP do Brevo no Supabase..." -ForegroundColor Cyan
+Write-Host "SMTP Host: $smtpHost" -ForegroundColor Gray
+Write-Host "User: $smtpUsername" -ForegroundColor Gray
 Write-Host ""
 
 try {
@@ -47,16 +47,16 @@ try {
         -Body $body `
         -ErrorAction Stop
     
-    Write-Host "✅ SMTP configurado com sucesso!" -ForegroundColor Green
+    Write-Host "SMTP configurado com sucesso!" -ForegroundColor Green
     Write-Host "Resposta: $($response.StatusCode) $($response.StatusDescription)" -ForegroundColor Green
     Write-Host ""
-    Write-Host "📋 Próximos passos:" -ForegroundColor Cyan
+    Write-Host "Próximos passos:" -ForegroundColor Cyan
     Write-Host "1. Vai para: https://supabase.com/dashboard/project/$projectRef" -ForegroundColor White
     Write-Host "2. Verifica Authentication > Email" -ForegroundColor White
     Write-Host "3. Testa o envio de um email de confirmação" -ForegroundColor White
 }
 catch {
-    Write-Host "❌ Erro no Endpoint 1" -ForegroundColor Red
+    Write-Host "Erro no Endpoint 1" -ForegroundColor Red
     Write-Host $_.Exception.Message -ForegroundColor Yellow
     Write-Host ""
     
@@ -80,12 +80,12 @@ catch {
             -Body $body2 `
             -ErrorAction Stop
         
-        Write-Host "✅ SMTP configurado com sucesso!" -ForegroundColor Green
+        Write-Host "SMTP configurado com sucesso!" -ForegroundColor Green
         Write-Host "Resposta: $($response.StatusCode)" -ForegroundColor Green
     }
     catch {
-        Write-Host "❌ Erro no Endpoint 2 também" -ForegroundColor Red
-        Write-Host "⚠️ Resolve manual:" -ForegroundColor Yellow
+        Write-Host "Erro no Endpoint 2 também" -ForegroundColor Red
+        Write-Host "Resolve manual:" -ForegroundColor Yellow
         Write-Host "1. Vai para https://supabase.com/dashboard/project/$projectRef" -ForegroundColor White
         Write-Host "2. Authentication > Email Settings" -ForegroundColor White
         Write-Host "3. Habilita Custom SMTP" -ForegroundColor White
@@ -101,4 +101,4 @@ catch {
 }
 
 Write-Host ""
-Write-Host "⏳ Aguarda 2-3 minutos para as mudanças fazerem efeito..." -ForegroundColor Cyan
+Write-Host "Aguarda 2-3 minutos para as mudanças fazerem efeito..." -ForegroundColor Cyan

@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, Crown, Building2, Wrench } from "lucide-react";
 import { PLANS, formatKz, CONTACT, whatsappUrl, buildActivationMessage } from "@/lib/constants";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/planos")({
   head: () => ({
@@ -15,11 +16,22 @@ export const Route = createFileRoute("/planos")({
 });
 
 function PlanosPage() {
+  const { user } = useAuth();
   const plans = [
-    { ...PLANS.simples, icon: Wrench, highlight: false },
-    { ...PLANS.premium, icon: Crown, highlight: true },
-    { ...PLANS.empresa_mensal, icon: Building2, highlight: false },
+    { ...PLANS.simples, icon: Wrench, highlight: false, planKey: "simples" },
+    { ...PLANS.premium, icon: Crown, highlight: true, planKey: "premium" },
+    { ...PLANS.empresa_mensal, icon: Building2, highlight: false, planKey: "empresa" },
   ];
+
+  const handlePlanClick = (planKey: string) => {
+    if (user) {
+      // Already logged in - go to payment
+      window.location.href = `/payment?plan=${planKey}`;
+    } else {
+      // Not logged in - go to signup
+      window.location.href = `/auth?mode=signup`;
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-16">
@@ -54,8 +66,11 @@ function PlanosPage() {
                 </li>
               ))}
             </ul>
-            <Button asChild className={`mt-7 ${p.highlight ? "bg-gradient-premium text-premium-foreground" : "bg-gradient-primary text-primary-foreground"}`}>
-              <Link to="/auth" search={{ mode: "signup" } as never}>Começar agora</Link>
+            <Button 
+              onClick={() => handlePlanClick(p.planKey)}
+              className={`mt-7 ${p.highlight ? "bg-gradient-premium text-premium-foreground" : "bg-gradient-primary text-primary-foreground"}`}
+            >
+              Começar agora
             </Button>
           </Card>
         ))}

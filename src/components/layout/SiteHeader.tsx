@@ -26,7 +26,7 @@ export function SiteHeader() {
           {user ? (
             <>
               {isAdmin && (
-                <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+                <Button asChild variant="ghost" size="sm">
                   <Link to="/admin"><Shield className="mr-1.5 h-4 w-4" />Admin</Link>
                 </Button>
               )}
@@ -39,7 +39,7 @@ export function SiteHeader() {
             </>
           ) : (
             <>
-              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+              <Button asChild variant="ghost" size="sm">
                 <Link to="/auth">Entrar</Link>
               </Button>
               <Button asChild size="sm" className="bg-gradient-primary text-primary-foreground shadow-elegant">

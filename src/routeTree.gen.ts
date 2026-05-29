@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TechniciansRouteImport } from './routes/technicians'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PlanosRouteImport } from './routes/planos'
+import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -19,9 +20,11 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as TechnicianIdRouteImport } from './routes/technician.$id'
 import { Route as DashboardPortfolioRouteImport } from './routes/dashboard.portfolio'
 import { Route as DashboardPerfilRouteImport } from './routes/dashboard.perfil'
 import { Route as DashboardComprovativoRouteImport } from './routes/dashboard.comprovativo'
+import { Route as AuthRecoverRouteImport } from './routes/auth.recover'
 import { Route as AdminZonesRouteImport } from './routes/admin.zones'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminSubscriptionsRouteImport } from './routes/admin.subscriptions'
@@ -45,6 +48,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const PlanosRoute = PlanosRouteImport.update({
   id: '/planos',
   path: '/planos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentRoute = PaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -82,6 +90,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const TechnicianIdRoute = TechnicianIdRouteImport.update({
+  id: '/technician/$id',
+  path: '/technician/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardPortfolioRoute = DashboardPortfolioRouteImport.update({
   id: '/portfolio',
   path: '/portfolio',
@@ -96,6 +109,11 @@ const DashboardComprovativoRoute = DashboardComprovativoRouteImport.update({
   id: '/comprovativo',
   path: '/comprovativo',
   getParentRoute: () => DashboardRoute,
+} as any)
+const AuthRecoverRoute = AuthRecoverRouteImport.update({
+  id: '/recover',
+  path: '/recover',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AdminZonesRoute = AdminZonesRouteImport.update({
   id: '/zones',
@@ -146,9 +164,10 @@ const AdminAdminsRoute = AdminAdminsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/contacto': typeof ContactoRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/payment': typeof PaymentRoute
   '/planos': typeof PlanosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
@@ -161,16 +180,19 @@ export interface FileRoutesByFullPath {
   '/admin/subscriptions': typeof AdminSubscriptionsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/zones': typeof AdminZonesRoute
+  '/auth/recover': typeof AuthRecoverRoute
   '/dashboard/comprovativo': typeof DashboardComprovativoRoute
   '/dashboard/perfil': typeof DashboardPerfilRoute
   '/dashboard/portfolio': typeof DashboardPortfolioRoute
+  '/technician/$id': typeof TechnicianIdRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/contacto': typeof ContactoRoute
+  '/payment': typeof PaymentRoute
   '/planos': typeof PlanosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
@@ -183,9 +205,11 @@ export interface FileRoutesByTo {
   '/admin/subscriptions': typeof AdminSubscriptionsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/zones': typeof AdminZonesRoute
+  '/auth/recover': typeof AuthRecoverRoute
   '/dashboard/comprovativo': typeof DashboardComprovativoRoute
   '/dashboard/perfil': typeof DashboardPerfilRoute
   '/dashboard/portfolio': typeof DashboardPortfolioRoute
+  '/technician/$id': typeof TechnicianIdRoute
   '/admin': typeof AdminIndexRoute
   '/dashboard': typeof DashboardIndexRoute
 }
@@ -193,9 +217,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/contacto': typeof ContactoRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/payment': typeof PaymentRoute
   '/planos': typeof PlanosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
@@ -208,9 +233,11 @@ export interface FileRoutesById {
   '/admin/subscriptions': typeof AdminSubscriptionsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/zones': typeof AdminZonesRoute
+  '/auth/recover': typeof AuthRecoverRoute
   '/dashboard/comprovativo': typeof DashboardComprovativoRoute
   '/dashboard/perfil': typeof DashboardPerfilRoute
   '/dashboard/portfolio': typeof DashboardPortfolioRoute
+  '/technician/$id': typeof TechnicianIdRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
@@ -222,6 +249,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contacto'
     | '/dashboard'
+    | '/payment'
     | '/planos'
     | '/sitemap.xml'
     | '/technicians'
@@ -234,9 +262,11 @@ export interface FileRouteTypes {
     | '/admin/subscriptions'
     | '/admin/users'
     | '/admin/zones'
+    | '/auth/recover'
     | '/dashboard/comprovativo'
     | '/dashboard/perfil'
     | '/dashboard/portfolio'
+    | '/technician/$id'
     | '/admin/'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
@@ -244,6 +274,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/contacto'
+    | '/payment'
     | '/planos'
     | '/sitemap.xml'
     | '/technicians'
@@ -256,9 +287,11 @@ export interface FileRouteTypes {
     | '/admin/subscriptions'
     | '/admin/users'
     | '/admin/zones'
+    | '/auth/recover'
     | '/dashboard/comprovativo'
     | '/dashboard/perfil'
     | '/dashboard/portfolio'
+    | '/technician/$id'
     | '/admin'
     | '/dashboard'
   id:
@@ -268,6 +301,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contacto'
     | '/dashboard'
+    | '/payment'
     | '/planos'
     | '/sitemap.xml'
     | '/technicians'
@@ -280,9 +314,11 @@ export interface FileRouteTypes {
     | '/admin/subscriptions'
     | '/admin/users'
     | '/admin/zones'
+    | '/auth/recover'
     | '/dashboard/comprovativo'
     | '/dashboard/perfil'
     | '/dashboard/portfolio'
+    | '/technician/$id'
     | '/admin/'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
@@ -290,12 +326,14 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   ContactoRoute: typeof ContactoRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  PaymentRoute: typeof PaymentRoute
   PlanosRoute: typeof PlanosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TechniciansRoute: typeof TechniciansRoute
+  TechnicianIdRoute: typeof TechnicianIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -319,6 +357,13 @@ declare module '@tanstack/react-router' {
       path: '/planos'
       fullPath: '/planos'
       preLoaderRoute: typeof PlanosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment': {
+      id: '/payment'
+      path: '/payment'
+      fullPath: '/payment'
+      preLoaderRoute: typeof PaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -370,6 +415,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/technician/$id': {
+      id: '/technician/$id'
+      path: '/technician/$id'
+      fullPath: '/technician/$id'
+      preLoaderRoute: typeof TechnicianIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/portfolio': {
       id: '/dashboard/portfolio'
       path: '/portfolio'
@@ -390,6 +442,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/comprovativo'
       preLoaderRoute: typeof DashboardComprovativoRouteImport
       parentRoute: typeof DashboardRoute
+    }
+    '/auth/recover': {
+      id: '/auth/recover'
+      path: '/recover'
+      fullPath: '/auth/recover'
+      preLoaderRoute: typeof AuthRecoverRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/admin/zones': {
       id: '/admin/zones'
@@ -485,6 +544,16 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface AuthRouteChildren {
+  AuthRecoverRoute: typeof AuthRecoverRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthRecoverRoute: AuthRecoverRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 interface DashboardRouteChildren {
   DashboardComprovativoRoute: typeof DashboardComprovativoRoute
   DashboardPerfilRoute: typeof DashboardPerfilRoute
@@ -506,12 +575,14 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   ContactoRoute: ContactoRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  PaymentRoute: PaymentRoute,
   PlanosRoute: PlanosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TechniciansRoute: TechniciansRoute,
+  TechnicianIdRoute: TechnicianIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

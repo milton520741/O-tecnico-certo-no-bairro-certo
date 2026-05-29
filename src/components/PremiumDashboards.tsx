@@ -24,7 +24,7 @@ export function PremiumDashboards() {
           whatsapp_number,
           verified_by
         `)
-        .eq('verified_by', null) // Remove if you want all verified
+        .not('verified_by', 'is', null)
         .order('rating', { ascending: false })
         .order('completed_jobs', { ascending: false })
         .limit(12);
@@ -51,7 +51,7 @@ export function PremiumDashboards() {
           whatsapp_number,
           verified_by
         `)
-        .eq('verified_by', null) // Remove if you want all verified
+        .not('verified_by', 'is', null)
         .order('rating', { ascending: false })
         .limit(12);
 

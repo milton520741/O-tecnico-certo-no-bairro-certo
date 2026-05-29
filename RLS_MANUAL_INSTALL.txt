@@ -1,0 +1,99 @@
+🎯 INSTRÇÕES PASSO A PASSO - APLICAR RLS POLICIES
+
+════════════════════════════════════════════════════════════════════════════════
+
+⚠️ IMPORTANTE: O SQL foi CORRIGIDO
+- Removido: 'super_admin' (não existe no enum)
+- Mantido: 'admin' (correto)
+
+════════════════════════════════════════════════════════════════════════════════
+
+📋 PASSO 1: Copiar o SQL Corrigido
+────────────────────────────────────
+
+O ficheiro SQL já está no seu clipboard!
+
+Se perder, está aqui:
+  supabase/20260529_subscriptions_rls_FIXED.sql
+
+════════════════════════════════════════════════════════════════════════════════
+
+🌐 PASSO 2: Abrir Supabase SQL Editor
+────────────────────────────────────
+
+URL: https://supabase.com/dashboard/project/ohfsifdothuvbbpufako/sql/new
+
+(Ou clique em: SQL Editor → New Query)
+
+════════════════════════════════════════════════════════════════════════════════
+
+✏️ PASSO 3: Colar o SQL
+────────────────────────────────────
+
+1. Clique no editor (área branca)
+2. Pressione: Ctrl + A (selecionar tudo)
+3. Pressione: Ctrl + V (colar)
+
+Resultado esperado:
+  - Vê o SQL com 5 políticas
+  - DROP POLICY ... (limpar antigas)
+  - CREATE POLICY ... (5x)
+  - SELECT... (verificar)
+
+════════════════════════════════════════════════════════════════════════════════
+
+▶️ PASSO 4: Executar
+────────────────────────────────────
+
+Procure o botão azul "Run" (canto superior direito)
+Clique nele
+
+Resultado esperado:
+  ✅ Sem erros
+  ✅ 0 rows affected (ou similar)
+  ✅ Mensagem: "Success"
+
+════════════════════════════════════════════════════════════════════════════════
+
+✅ PASSO 5: Verificar Políticas Aplicadas
+────────────────────────────────────
+
+Na aba "Results" abaixo, deve aparecer:
+
+policyname                        | tablename
+─────────────────────────────────────────────
+admin_all_subscriptions           | subscriptions
+admin_delete_subscriptions        | subscriptions
+admin_update_subscriptions        | subscriptions
+user_create_own_subscriptions     | subscriptions
+user_read_own_subscriptions       | subscriptions
+
+(5 linhas = SUCESSO!)
+
+════════════════════════════════════════════════════════════════════════════════
+
+🧪 PRÓXIMO PASSO (após RLS): Testar o Sistema
+────────────────────────────────────
+
+Ficheiro: supabase/20260529_test_subscriptions.sql
+
+Instruções: Executar por SECÇÕES (não tudo de uma vez)
+
+════════════════════════════════════════════════════════════════════════════════
+
+❌ SE TIVER ERRO:
+
+Erro: "policy already exists"
+→ Solução: SQL já dropou, tenta novamente
+
+Erro: "role does not exist"
+→ Solução: Confirmado que é 'admin' só, não 'super_admin'
+
+Erro: "table subscriptions does not exist"
+→ Solução: BD tem problema, contacta admin
+
+════════════════════════════════════════════════════════════════════════════════
+
+⏱️ TEMPO ESTIMADO: 2-3 minutos
+
+Agora já está pronto! Aproveita bem! 🚀

@@ -11,7 +11,10 @@ export async function uploadPublic(userId: string, file: File, folder = "profile
     upsert: false,
     contentType: file.type,
   });
-  if (error) throw error;
+  if (error) {
+    console.error("Upload error:", error);
+    throw new Error(`Erro ao carregar ficheiro: ${error.message}`);
+  }
   const { data } = supabase.storage.from("public-assets").getPublicUrl(path);
   return data.publicUrl;
 }
@@ -25,7 +28,10 @@ export async function uploadPrivate(userId: string, file: File, folder = "proofs
     upsert: false,
     contentType: file.type,
   });
-  if (error) throw error;
+  if (error) {
+    console.error("Upload error:", error);
+    throw new Error(`Erro ao carregar ficheiro: ${error.message}`);
+  }
   return path;
 }
 
