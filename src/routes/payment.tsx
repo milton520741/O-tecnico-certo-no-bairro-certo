@@ -53,16 +53,27 @@ function PaymentPage() {
     try {
       const path = await uploadPrivate(user!.id, file, "payment_proofs");
 
-      // Create subscription record
-      const { data, error } = await supabase.from("subscriptions").insert({
-        owner_id: user!.id,
-        plan: search.plan,
-        file_path: path,
-        status: "pending",
-        note: `Comprovativo de pagamento para ${plan.name} - ${plan.price} Kz`,
-      });
+      const { data: sub, error } = await supabase
+        .from("subscriptions")
+        .insert({
+          owner_id: user!.id,
+          owner_type: "technician",
+          plan: search.plan as "simples" | "premium" | "empresa_mensal",
+          status: "pending",
+        })
+        .select("id")
+        .single();
 
       if (error) throw error;
+
+      if (sub) {
+        await supabase.from("payment_proofs").insert({
+          subscription_id: sub.id,
+          owner_id: user!.id,
+          file_path: path,
+          plan: search.plan as "simples" | "premium" | "empresa_mensal",
+        });
+      }
 
       toast.success(
         "Comprovativo enviado! O admin ativará em até 24h úteis."

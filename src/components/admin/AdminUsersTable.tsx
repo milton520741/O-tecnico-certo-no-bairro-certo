@@ -66,9 +66,10 @@ export function AdminUsersTable() {
   // Ban user mutation
   const banMutation = useMutation({
     mutationFn: async (userId: string) => {
-      const { data, error } = await supabase.rpc('ban_user', {
+      const { data: authData } = await supabase.auth.getUser();
+      const { data, error } = await (supabase.rpc as any)('ban_user', {
         _user_id: userId,
-        _banned_by: supabase.auth.user()?.id,
+        _banned_by: authData.user?.id,
         _reason: banReason,
       });
       if (error) throw error;

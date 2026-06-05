@@ -268,11 +268,11 @@ function AdminDashboard() {
           <CardContent>
             {pendingSubscriptions && pendingSubscriptions.length > 0 ? (
               <div className="space-y-3">
-                {pendingSubscriptions.map((sub) => (
+                {pendingSubscriptions.map((sub: any) => (
                   <div key={sub.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50">
                     <div className="flex-1">
                       <p className="font-medium text-sm">
-                        {sub.technician ? `👨‍🔧 ${sub.technician.full_name}` : sub.company ? `🏢 ${sub.company.name}` : 'Utilizador'}
+                        {sub.technician?.full_name ? `👨‍🔧 ${sub.technician.full_name}` : sub.company?.name ? `🏢 ${sub.company.name}` : 'Utilizador'}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Plano: <strong>{sub.plan}</strong> • {new Date(sub.created_at).toLocaleDateString('pt-PT')}
@@ -306,14 +306,14 @@ function AdminDashboard() {
           <CardContent>
             {pendingPayments && pendingPayments.length > 0 ? (
               <div className="space-y-3">
-                {pendingPayments.map((payment) => (
+                {pendingPayments.map((payment: any) => (
                   <div key={payment.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50">
                     <div className="flex-1">
                       <p className="font-medium text-sm">
                         Assinatura #{payment.subscription_id}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        Plano: <strong>{payment.subscription?.plan}</strong> • {new Date(payment.created_at).toLocaleDateString('pt-PT')}
+                        Plano: <strong>{payment.subscription?.plan ?? payment.plan}</strong> • {new Date(payment.created_at).toLocaleDateString('pt-PT')}
                       </p>
                     </div>
                     <a href={payment.proof_url} target="_blank" rel="noopener noreferrer">
