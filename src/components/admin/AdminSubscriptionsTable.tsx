@@ -25,18 +25,18 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface Subscription {
-  id: string;
+  id: number;
   owner_id: string;
   owner_type: 'technician' | 'company';
   plan: 'simples' | 'premium' | 'empresa_mensal';
   status: 'pending' | 'active' | 'expired' | 'rejected';
-  start_at: string;
-  end_at: string;
+  start_at: string | null;
+  end_at: string | null;
   created_at: string;
   profiles?: {
     full_name?: string;
     email?: string;
-  };
+  } | null;
 }
 
 const PLAN_PRICES: Record<string, { label: string; price: number }> = {
