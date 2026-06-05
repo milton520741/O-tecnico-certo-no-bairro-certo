@@ -69,9 +69,9 @@ function PaymentPage() {
       if (sub) {
         await supabase.from("payment_proofs").insert({
           subscription_id: sub.id,
-          uploader_id: user!.id,
+          owner_id: user!.id,
           file_path: path,
-          method: "iban",
+          plan: search.plan as "simples" | "premium" | "empresa_mensal",
         });
       }
 

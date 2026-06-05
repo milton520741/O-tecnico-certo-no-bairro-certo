@@ -64,13 +64,13 @@ export function AdminSubscriptionsTable() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as unknown as Subscription[];
     },
   });
 
   // Approve subscription
   const approveMutation = useMutation({
-    mutationFn: async (subscriptionId: string) => {
+    mutationFn: async (subscriptionId: number) => {
       const { error } = await supabase
         .from('subscriptions')
         .update({
@@ -94,15 +94,15 @@ export function AdminSubscriptionsTable() {
       subscriptionId,
       reason,
     }: {
-      subscriptionId: string;
+      subscriptionId: number;
       reason: string;
     }) => {
       if (!reason.trim()) {
         throw new Error('Motivo da rejeição é obrigatório');
       }
 
-      const { error } = await supabase
-        .from('subscriptions')
+      const { error } = await (supabase
+        .from('subscriptions') as any)
         .update({
           status: 'rejected',
           rejection_reason: reason,
