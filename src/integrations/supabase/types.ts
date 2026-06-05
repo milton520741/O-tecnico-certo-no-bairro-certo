@@ -416,6 +416,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      expire_due_subscriptions: { Args: never; Returns: number }
       has_active_subscription: { Args: { _owner_id: string }; Returns: boolean }
       has_role: {
         Args: {
