@@ -31,7 +31,7 @@ function RecoverPage() {
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset`,
+        redirectTo: `${window.location.origin}/auth`,
       });
 
       if (error) throw error;
@@ -58,7 +58,7 @@ function RecoverPage() {
         <div className="text-center">
           <h1 className="font-display text-2xl font-bold">Recuperar Palavra-passe</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Envia-te um email com instruções para redefinir a tua palavra-passe.
+            Enviaremos um email para o endereço usado no teu cadastro com instruções para redefinir a palavra-passe.
           </p>
         </div>
 

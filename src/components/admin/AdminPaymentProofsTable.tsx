@@ -26,7 +26,8 @@ import { ptBR } from 'date-fns/locale';
 
 interface PaymentProof {
   id: string;
-  subscription_id: string;
+  owner_id: string;
+  subscription_id: string | null;
   amount: number;
   proof_url: string;
   status: 'pending' | 'approved' | 'rejected';
@@ -34,6 +35,7 @@ interface PaymentProof {
   review_notes?: string;
   reviewed_at?: string;
   created_at: string;
+  plan: string;
   subscription?: {
     owner_id: string;
     owner_type: 'technician' | 'company';
@@ -90,28 +92,57 @@ export function AdminPaymentProofsTable() {
 
       if (paymentError) throw paymentError;
 
-      // Activate the associated subscription
       const payment = payments.find(p => p.id === paymentId);
-      if (payment) {
-        const { error: subError } = await supabase
+      if (!payment) {
+        throw new Error('Pagamento não encontrado');
+      }
+
+      let subscriptionId = payment.subscription_id;
+      if (!subscriptionId) {
+        const ownerType = payment.plan === 'empresa_mensal' ? 'company' : 'technician';
+        const { data: newSub, error: subCreateError } = await supabase
           .from('subscriptions')
-          .update({
+          .insert({
+            owner_id: payment.owner_id,
+            owner_type: ownerType,
+            plan: payment.plan,
             status: 'active',
             start_at: new Date().toISOString(),
           })
-          .eq('id', payment.subscription_id);
+          .select('id')
+          .single();
 
-        if (subError) throw subError;
+        if (subCreateError || !newSub) {
+          throw subCreateError || new Error('Erro ao criar assinatura de aprovação.');
+        }
 
-        // Log the action
-        await supabase.from('admin_logs').insert({
-          admin_id: (await supabase.auth.getUser()).data.user?.id,
-          action: 'PAYMENT_APPROVED',
-          entity_type: 'payment_proof',
-          entity_id: paymentId,
-          entity_data: payment,
-        });
+        subscriptionId = newSub.id;
+        const { error: linkError } = await supabase
+          .from('payment_proofs')
+          .update({ subscription_id: subscriptionId })
+          .eq('id', paymentId);
+
+        if (linkError) throw linkError;
       }
+
+      const { error: subError } = await supabase
+        .from('subscriptions')
+        .update({
+          status: 'active',
+          start_at: new Date().toISOString(),
+        })
+        .eq('id', subscriptionId);
+
+      if (subError) throw subError;
+
+      // Log the action
+      await supabase.from('admin_logs').insert({
+        admin_id: (await supabase.auth.getUser()).data.user?.id,
+        action: 'PAYMENT_APPROVED',
+        entity_type: 'payment_proof',
+        entity_id: paymentId,
+        entity_data: payment,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-payment-proofs'] });

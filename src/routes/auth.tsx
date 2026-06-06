@@ -85,8 +85,14 @@ function LoginForm() {
       <div>
         <Label htmlFor="password">Palavra-passe</Label>
         <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
-        <Button asChild variant="link" size="sm" className="mt-2 h-auto p-0 text-xs">
-          <Link to="/auth/recover">Esqueceu a palavra-passe?</Link>
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          className="mt-3 w-full"
+          onClick={() => navigate({ to: "/auth/recover" })}
+        >
+          Esqueceu a palavra-passe?
         </Button>
       </div>
       <Button type="submit" className="w-full bg-gradient-primary text-primary-foreground" disabled={loading}>

@@ -71,21 +71,13 @@ function ComprovativoPage() {
     setSubmitting(true);
     try {
       const path = await uploadPrivate(user.id, file, "proofs");
-      // Create pending subscription
-      const { data: sub, error: subErr } = await supabase.from("subscriptions").insert({
-        owner_id: user.id,
-        owner_type: isCompany ? "company" : "technician",
-        plan,
-        status: "pending",
-      }).select("id").single();
-      if (subErr) throw subErr;
 
       const { error: pErr } = await supabase.from("payment_proofs").insert({
         owner_id: user.id,
         plan,
         file_path: path,
         note: note.trim() || null,
-        subscription_id: sub.id,
+        reviewed: false,
       });
       if (pErr) throw pErr;
 

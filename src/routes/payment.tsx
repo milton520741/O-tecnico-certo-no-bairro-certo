@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/payment")({
 
 function PaymentPage() {
   const search = Route.useSearch();
-  const { user } = useAuth();
+  const { user, roles } = useAuth();
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
   const [step, setStep] = useState<"payment" | "proof">("payment");
@@ -49,36 +49,31 @@ function PaymentPage() {
       return;
     }
 
+    if (!user) {
+      toast.error("Precisas de estar logado para enviar o comprovativo.");
+      e.target.value = "";
+      setUploading(false);
+      return;
+    }
+
     setUploading(true);
     try {
-      const path = await uploadPrivate(user!.id, file, "payment_proofs");
+      const path = await uploadPrivate(user.id, file, "payment_proofs");
+      const { error: proofError } = await supabase.from("payment_proofs").insert({
+        owner_id: user.id,
+        plan: search.plan,
+        file_path: path,
+        note: `Comprovativo de pagamento para ${plan.name} - ${plan.price} Kz`,
+        reviewed: false,
+      });
 
-      const { data: sub, error } = await supabase
-        .from("subscriptions")
-        .insert({
-          owner_id: user!.id,
-          owner_type: "technician",
-          plan: search.plan as "simples" | "premium" | "empresa_mensal",
-          status: "pending",
-        })
-        .select("id")
-        .single();
-
-      if (error) throw error;
-
-      if (sub) {
-        await supabase.from("payment_proofs").insert({
-          subscription_id: sub.id,
-          owner_id: user!.id,
-          file_path: path,
-          plan: search.plan as "simples" | "premium" | "empresa_mensal",
-        });
+      if (proofError) {
+        throw proofError;
       }
 
-      toast.success(
-        "Comprovativo enviado! O admin ativará em até 24h úteis."
-      );
+      toast.success("Comprovativo enviado! O admin ativará em até 24h úteis.");
       setStep("payment");
+
       setTimeout(() => {
         window.location.href = "/dashboard";
       }, 2000);
