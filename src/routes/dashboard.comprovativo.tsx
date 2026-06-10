@@ -4,15 +4,13 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Upload, ArrowLeft, CheckCircle2, Clock, XCircle } from "lucide-react";
 import { toast } from "sonner";
-import { uploadPrivate, fileFromInput } from "@/lib/upload";
-import { PLANS, formatKz, CONTACT, whatsappUrl, buildActivationMessage, type PlanId } from "@/lib/constants";
+import { PLANS, formatKz, CONTACT, type PlanId } from "@/lib/constants";
 
 export const Route = createFileRoute("/dashboard/comprovativo")({
   head: () => ({ meta: [{ title: "Comprovativo — EvoluinF" }] }),
@@ -28,7 +26,6 @@ function ComprovativoPage() {
 
   const [plan, setPlan] = useState<PlanId>(isCompany ? "empresa_mensal" : "simples");
   const [note, setNote] = useState("");
-  const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [history, setHistory] = useState<Proof[]>([]);
   const [loadingHist, setLoadingHist] = useState(true);
@@ -55,35 +52,21 @@ function ComprovativoPage() {
     isCompany ? p.owner === "company" : p.owner === "technician"
   );
 
-  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-    try {
-      const f = fileFromInput(e);
-      setFile(f);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Ficheiro inválido");
-      e.target.value = "";
-    }
-  }
-
   async function submit() {
-    if (!file) return toast.error("Anexa o comprovativo (imagem ou PDF).");
     if (!user) return;
     setSubmitting(true);
     try {
-      // Save proof locally first
-      const path = await uploadPrivate(user.id, file, "proofs");
-
+      // Just register the payment request without uploading the file
       const { error: pErr } = await supabase.from("payment_proofs").insert({
         owner_id: user.id,
         plan,
-        file_path: path,
+        file_path: null, // No file upload, will be sent via WhatsApp
         note: note.trim() || null,
         reviewed: false,
       });
       if (pErr) throw pErr;
 
-      toast.success("Comprovativo registado! A abrir WhatsApp...");
-      setFile(null);
+      toast.success("Pedido registado! A abrir WhatsApp...");
       setNote("");
       const { data } = await supabase.from("payment_proofs").select("id,created_at,plan,reviewed,note").eq("owner_id", user.id).order("created_at", { ascending: false });
       setHistory(data ?? []);
@@ -91,13 +74,13 @@ function ComprovativoPage() {
       // Open WhatsApp with message
       setTimeout(() => {
         const message = encodeURIComponent(
-          `Olá EvoluinF, quero ativar meu cadastro.\nNome: ${user.email ?? "N/A"}\nPlano: ${PLANS[plan]?.label || plan}\n\nJá fiz o pagamento. Segue em anexo o comprovativo.`
+          `Olá EvoluinF! 👋\n\nQuero ativar meu cadastro:\n📧 Email: ${user.email ?? "N/A"}\n📋 Plano: ${PLANS[plan]?.label || plan}\n💰 Valor: KZ ${PLANS[plan as PlanId]?.price || "N/A"}\n\nJá fiz o pagamento. Segue em anexo o comprovativo.`
         );
         const whatsappLink = `https://wa.me/244947470500?text=${message}`;
         window.open(whatsappLink, "_blank", "noopener,noreferrer");
       }, 500);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao enviar");
+      toast.error(err instanceof Error ? err.message : "Erro ao registar pedido");
     } finally {
       setSubmitting(false);
     }
@@ -144,22 +127,16 @@ function ComprovativoPage() {
       </Card>
 
       <Card className="mt-5 space-y-4 p-6">
-        <h2 className="font-semibold">3. Anexa o comprovativo</h2>
+        <h2 className="font-semibold">3. Detalhes do pedido</h2>
         <div>
-          <Label htmlFor="proof" className="inline-flex cursor-pointer items-center gap-2 rounded-md border-2 border-dashed border-input bg-secondary/30 px-4 py-6 text-sm font-medium hover:bg-accent">
-            <Upload className="h-4 w-4" />
-            {file ? file.name : "Clique para anexar imagem ou PDF (máx 5MB)"}
-          </Label>
-          <input id="proof" type="file" accept="image/*,application/pdf" className="hidden" onChange={handleFile} />
+          <Label htmlFor="note">Nota / Referência de pagamento (opcional)</Label>
+          <Textarea id="note" value={note} onChange={(e) => setNote(e.target.value)} rows={3} maxLength={300} placeholder="Ex: Referência da transferência, telefone usado no Xpress, banco utilizado..." />
         </div>
-        <div>
-          <Label htmlFor="note">Nota (opcional)</Label>
-          <Textarea id="note" value={note} onChange={(e) => setNote(e.target.value)} rows={3} maxLength={300} placeholder="Referência da transferência, telefone usado no Xpress..." />
-        </div>
+        <p className="text-xs text-muted-foreground">💡 O comprovativo será enviado diretamente pelo WhatsApp após clicares no botão abaixo.</p>
         <div className="flex flex-wrap gap-3">
-          <Button onClick={submit} disabled={submitting || !file} className="bg-gradient-primary text-primary-foreground">
+          <Button onClick={submit} disabled={submitting} className="bg-gradient-primary text-primary-foreground">
             {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
-            Enviar e notificar via WhatsApp
+            Enviar pedido via WhatsApp
           </Button>
         </div>
       </Card>
