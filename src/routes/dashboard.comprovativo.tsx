@@ -70,6 +70,7 @@ function ComprovativoPage() {
     if (!user) return;
     setSubmitting(true);
     try {
+      // Save proof locally first
       const path = await uploadPrivate(user.id, file, "proofs");
 
       const { error: pErr } = await supabase.from("payment_proofs").insert({
@@ -81,17 +82,20 @@ function ComprovativoPage() {
       });
       if (pErr) throw pErr;
 
-      toast.success("Comprovativo enviado! A abrir WhatsApp...");
+      toast.success("Comprovativo registado! A abrir WhatsApp...");
       setFile(null);
       setNote("");
       const { data } = await supabase.from("payment_proofs").select("id,created_at,plan,reviewed,note").eq("owner_id", user.id).order("created_at", { ascending: false });
       setHistory(data ?? []);
 
-      // Automatically notify via WhatsApp after successful upload
+      // Open WhatsApp with message
       setTimeout(() => {
-        const whatsappLink = whatsappUrl(CONTACT.ownerWhatsapp, buildActivationMessage(user.email ?? "", plan));
+        const message = encodeURIComponent(
+          `Olá EvoluinF, quero ativar meu cadastro.\nNome: ${user.email ?? "N/A"}\nPlano: ${PLANS[plan]?.label || plan}\n\nJá fiz o pagamento. Segue em anexo o comprovativo.`
+        );
+        const whatsappLink = `https://wa.me/244947470500?text=${message}`;
         window.open(whatsappLink, "_blank", "noopener,noreferrer");
-      }, 800);
+      }, 500);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erro ao enviar");
     } finally {
