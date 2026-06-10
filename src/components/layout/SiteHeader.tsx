@@ -15,6 +15,12 @@ export function SiteHeader() {
           <Link to="/technicians" className="text-sm font-medium text-muted-foreground transition-smooth hover:text-foreground">
             Técnicos
           </Link>
+          <Link to="/verificados" className="text-sm font-medium text-muted-foreground transition-smooth hover:text-foreground">
+            Verificados
+          </Link>
+          <Link to="/pendentes" className="text-sm font-medium text-muted-foreground transition-smooth hover:text-foreground">
+            Pendentes
+          </Link>
           <Link to="/planos" className="text-sm font-medium text-muted-foreground transition-smooth hover:text-foreground">
             Planos
           </Link>
