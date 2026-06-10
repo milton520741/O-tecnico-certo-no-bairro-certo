@@ -36,6 +36,7 @@ import { Route as AdminReportsRouteImport } from './routes/admin.reports'
 import { Route as AdminPaymentProofsRouteImport } from './routes/admin.payment-proofs'
 import { Route as AdminLogsRouteImport } from './routes/admin.logs'
 import { Route as AdminAdminsRouteImport } from './routes/admin.admins'
+import { Route as AdminActivationRouteImport } from './routes/admin.activation'
 
 const VerificadosRoute = VerificadosRouteImport.update({
   id: '/verificados',
@@ -172,6 +173,11 @@ const AdminAdminsRoute = AdminAdminsRouteImport.update({
   path: '/admins',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminActivationRoute = AdminActivationRouteImport.update({
+  id: '/activation',
+  path: '/activation',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
   '/verificados': typeof VerificadosRoute
+  '/admin/activation': typeof AdminActivationRoute
   '/admin/admins': typeof AdminAdminsRoute
   '/admin/logs': typeof AdminLogsRoute
   '/admin/payment-proofs': typeof AdminPaymentProofsRoute
@@ -212,6 +219,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
   '/verificados': typeof VerificadosRoute
+  '/admin/activation': typeof AdminActivationRoute
   '/admin/admins': typeof AdminAdminsRoute
   '/admin/logs': typeof AdminLogsRoute
   '/admin/payment-proofs': typeof AdminPaymentProofsRoute
@@ -242,6 +250,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
   '/verificados': typeof VerificadosRoute
+  '/admin/activation': typeof AdminActivationRoute
   '/admin/admins': typeof AdminAdminsRoute
   '/admin/logs': typeof AdminLogsRoute
   '/admin/payment-proofs': typeof AdminPaymentProofsRoute
@@ -273,6 +282,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/technicians'
     | '/verificados'
+    | '/admin/activation'
     | '/admin/admins'
     | '/admin/logs'
     | '/admin/payment-proofs'
@@ -300,6 +310,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/technicians'
     | '/verificados'
+    | '/admin/activation'
     | '/admin/admins'
     | '/admin/logs'
     | '/admin/payment-proofs'
@@ -329,6 +340,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/technicians'
     | '/verificados'
+    | '/admin/activation'
     | '/admin/admins'
     | '/admin/logs'
     | '/admin/payment-proofs'
@@ -553,10 +565,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/activation': {
+      id: '/admin/activation'
+      path: '/activation'
+      fullPath: '/admin/activation'
+      preLoaderRoute: typeof AdminActivationRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminActivationRoute: typeof AdminActivationRoute
   AdminAdminsRoute: typeof AdminAdminsRoute
   AdminLogsRoute: typeof AdminLogsRoute
   AdminPaymentProofsRoute: typeof AdminPaymentProofsRoute
@@ -570,6 +590,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminActivationRoute: AdminActivationRoute,
   AdminAdminsRoute: AdminAdminsRoute,
   AdminLogsRoute: AdminLogsRoute,
   AdminPaymentProofsRoute: AdminPaymentProofsRoute,
@@ -629,3 +650,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
