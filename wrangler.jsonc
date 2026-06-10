@@ -7,6 +7,13 @@
   "vars": {
     "NODE_ENV": "production"
   },
+  "build": {
+    "command": "npm run build"
+  },
+  "alias": {
+    "tanstack-start-injected-head-scripts:v": "./node_modules/@tanstack/start-server-core/dist/esm/empty.js",
+    "tanstack-start-injected-scripts:v": "./node_modules/@tanstack/start-server-core/dist/esm/empty.js"
+  },
   "env": {
     "production": {
       "name": "otecnicocertonobairrocerto",
