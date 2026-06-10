@@ -9,9 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerificadosRouteImport } from './routes/verificados'
 import { Route as TechniciansRouteImport } from './routes/technicians'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PlanosRouteImport } from './routes/planos'
+import { Route as PendentesRouteImport } from './routes/pendentes'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactoRouteImport } from './routes/contacto'
@@ -35,6 +37,11 @@ import { Route as AdminPaymentProofsRouteImport } from './routes/admin.payment-p
 import { Route as AdminLogsRouteImport } from './routes/admin.logs'
 import { Route as AdminAdminsRouteImport } from './routes/admin.admins'
 
+const VerificadosRoute = VerificadosRouteImport.update({
+  id: '/verificados',
+  path: '/verificados',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TechniciansRoute = TechniciansRouteImport.update({
   id: '/technicians',
   path: '/technicians',
@@ -48,6 +55,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const PlanosRoute = PlanosRouteImport.update({
   id: '/planos',
   path: '/planos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PendentesRoute = PendentesRouteImport.update({
+  id: '/pendentes',
+  path: '/pendentes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaymentRoute = PaymentRouteImport.update({
@@ -168,9 +180,11 @@ export interface FileRoutesByFullPath {
   '/contacto': typeof ContactoRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/payment': typeof PaymentRoute
+  '/pendentes': typeof PendentesRoute
   '/planos': typeof PlanosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
+  '/verificados': typeof VerificadosRoute
   '/admin/admins': typeof AdminAdminsRoute
   '/admin/logs': typeof AdminLogsRoute
   '/admin/payment-proofs': typeof AdminPaymentProofsRoute
@@ -193,9 +207,11 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRouteWithChildren
   '/contacto': typeof ContactoRoute
   '/payment': typeof PaymentRoute
+  '/pendentes': typeof PendentesRoute
   '/planos': typeof PlanosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
+  '/verificados': typeof VerificadosRoute
   '/admin/admins': typeof AdminAdminsRoute
   '/admin/logs': typeof AdminLogsRoute
   '/admin/payment-proofs': typeof AdminPaymentProofsRoute
@@ -221,9 +237,11 @@ export interface FileRoutesById {
   '/contacto': typeof ContactoRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/payment': typeof PaymentRoute
+  '/pendentes': typeof PendentesRoute
   '/planos': typeof PlanosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/technicians': typeof TechniciansRoute
+  '/verificados': typeof VerificadosRoute
   '/admin/admins': typeof AdminAdminsRoute
   '/admin/logs': typeof AdminLogsRoute
   '/admin/payment-proofs': typeof AdminPaymentProofsRoute
@@ -250,9 +268,11 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/dashboard'
     | '/payment'
+    | '/pendentes'
     | '/planos'
     | '/sitemap.xml'
     | '/technicians'
+    | '/verificados'
     | '/admin/admins'
     | '/admin/logs'
     | '/admin/payment-proofs'
@@ -275,9 +295,11 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contacto'
     | '/payment'
+    | '/pendentes'
     | '/planos'
     | '/sitemap.xml'
     | '/technicians'
+    | '/verificados'
     | '/admin/admins'
     | '/admin/logs'
     | '/admin/payment-proofs'
@@ -302,9 +324,11 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/dashboard'
     | '/payment'
+    | '/pendentes'
     | '/planos'
     | '/sitemap.xml'
     | '/technicians'
+    | '/verificados'
     | '/admin/admins'
     | '/admin/logs'
     | '/admin/payment-proofs'
@@ -330,14 +354,23 @@ export interface RootRouteChildren {
   ContactoRoute: typeof ContactoRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   PaymentRoute: typeof PaymentRoute
+  PendentesRoute: typeof PendentesRoute
   PlanosRoute: typeof PlanosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TechniciansRoute: typeof TechniciansRoute
+  VerificadosRoute: typeof VerificadosRoute
   TechnicianIdRoute: typeof TechnicianIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verificados': {
+      id: '/verificados'
+      path: '/verificados'
+      fullPath: '/verificados'
+      preLoaderRoute: typeof VerificadosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/technicians': {
       id: '/technicians'
       path: '/technicians'
@@ -357,6 +390,13 @@ declare module '@tanstack/react-router' {
       path: '/planos'
       fullPath: '/planos'
       preLoaderRoute: typeof PlanosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pendentes': {
+      id: '/pendentes'
+      path: '/pendentes'
+      fullPath: '/pendentes'
+      preLoaderRoute: typeof PendentesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/payment': {
@@ -579,21 +619,13 @@ const rootRouteChildren: RootRouteChildren = {
   ContactoRoute: ContactoRoute,
   DashboardRoute: DashboardRouteWithChildren,
   PaymentRoute: PaymentRoute,
+  PendentesRoute: PendentesRoute,
   PlanosRoute: PlanosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TechniciansRoute: TechniciansRoute,
+  VerificadosRoute: VerificadosRoute,
   TechnicianIdRoute: TechnicianIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
