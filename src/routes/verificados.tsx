@@ -79,26 +79,26 @@ function VerifiedDashboard() {
       const tzMap = new Map<string, Set<string>>();
       (tzR.data ?? []).forEach((r: any) => {
         if (!tzMap.has(r.technician_id)) tzMap.set(r.technician_id, new Set());
-        tzMap.get(r.technician_id)!.add(r.zone_id);
+        tzMap.get(r.technician_id)!.add(String(r.zone_id));
       });
       const tsMap = new Map<string, Set<string>>();
       (tsR.data ?? []).forEach((r: any) => {
         if (!tsMap.has(r.technician_id)) tsMap.set(r.technician_id, new Set());
-        tsMap.get(r.technician_id)!.add(r.service_id);
+        tsMap.get(r.technician_id)!.add(String(r.service_id));
       });
       const czMap = new Map<string, Set<string>>();
       (czR.data ?? []).forEach((r: any) => {
         if (!czMap.has(r.company_id)) czMap.set(r.company_id, new Set());
-        czMap.get(r.company_id)!.add(r.zone_id);
+        czMap.get(r.company_id)!.add(String(r.zone_id));
       });
       const csMap = new Map<string, Set<string>>();
       (csR.data ?? []).forEach((r: any) => {
         if (!csMap.has(r.company_id)) csMap.set(r.company_id, new Set());
-        csMap.get(r.company_id)!.add(r.service_id);
+        csMap.get(r.company_id)!.add(String(r.service_id));
       });
 
-      setZones((zR.data ?? []) as Opt[]);
-      setServices((sR.data ?? []) as Opt[]);
+      setZones(((zR.data ?? []) as any[]).map((z:any)=>({id:String(z.id),name:z.name})));
+      setServices(((sR.data ?? []) as any[]).map((s:any)=>({id:String(s.id),name:s.name})));
       setTechs(
         ((tR.data ?? []) as any[])
           .filter((t) => activeIds.has(t.id))
