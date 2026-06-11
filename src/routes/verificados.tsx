@@ -30,6 +30,7 @@ interface Comp {
   zoneIds: Set<string>; serviceIds: Set<string>;
 }
 interface Opt { id: string; name: string }
+// ids may be numeric in DB; coerce to string
 
 const PAGE_SIZE = 9;
 const ALL = "__all__";
