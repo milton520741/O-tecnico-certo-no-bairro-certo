@@ -89,6 +89,17 @@ export function AdminUsersTable() {
     }
   };
 
+  const credentialMutation = useMutation({
+    mutationFn: async (user: any) => {
+      const table = user.type === 'technician' ? 'technicians' : 'companies';
+      const patch: any = { is_verified: true };
+      if (table === 'technicians') patch.is_premium = true;
+      const { error } = await supabase.from(table).update(patch).eq('id', user.id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-users'] }),
+  });
+
   if (isLoading) return <div>Carregando...</div>;
 
   return (
@@ -142,17 +153,28 @@ export function AdminUsersTable() {
                     )}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={user.is_banned}
-                      onClick={() => {
-                        setSelectedUser(user);
-                        setShowBanDialog(true);
-                      }}
-                    >
-                      {user.is_banned ? 'Banido' : 'Banir'}
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="default"
+                        disabled={user.is_banned || (user.is_verified && (user.type !== 'technician' || user.is_premium)) || credentialMutation.isPending}
+                        onClick={() => credentialMutation.mutate(user)}
+                        title="Verifica o utilizador e ativa o Premium (mostra WhatsApp)"
+                      >
+                        {user.is_verified && (user.type !== 'technician' || user.is_premium) ? 'Credenciado' : 'Credenciar'}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={user.is_banned}
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setShowBanDialog(true);
+                        }}
+                      >
+                        {user.is_banned ? 'Banido' : 'Banir'}
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
