@@ -90,8 +90,8 @@ function PendingDashboard() {
         csMap.get(r.company_id)!.add(String(r.service_id));
       });
 
-      setZones(((zR.data ?? []) as any[]).map((z:any)=>({id:String(z.id),name:z.name})));
-      setServices(((sR.data ?? []) as any[]).map((s:any)=>({id:String(s.id),name:s.name})));
+      setZones((zR.data ?? []).map((z: any) => ({ id: String(z.id), name: z.name })));
+      setServices((sR.data ?? []).map((s: any) => ({ id: String(s.id), name: s.name })));
       setTechs(
         ((tR.data ?? []) as any[])
           .filter((t) => !t.is_verified || !activeIds.has(t.id))
