@@ -215,19 +215,34 @@ function TechnicianProfilePage() {
               </p>
             )}
 
-            {/* WhatsApp gated by active subscription */}
+            {/* Contacto visível quando credenciado (verificado + premium) ou com assinatura activa */}
             <div className="mt-6">
-              {hasActive && whatsappLink ? (
-                <Button
-                  asChild
-                  size="lg"
-                  className="w-full bg-success text-success-foreground hover:bg-success/90 md:w-auto"
-                >
-                  <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle className="mr-2 h-5 w-5" />
-                    Contactar via WhatsApp
-                  </a>
-                </Button>
+              {(hasActive || (technician.is_verified && technician.is_premium)) && whatsappDigits ? (
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  {whatsappLink && (
+                    <Button
+                      asChild
+                      size="lg"
+                      className="w-full bg-success text-success-foreground hover:bg-success/90 sm:w-auto"
+                    >
+                      <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                        <MessageCircle className="mr-2 h-5 w-5" />
+                        Contactar via WhatsApp
+                      </a>
+                    </Button>
+                  )}
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto"
+                  >
+                    <a href={`tel:${whatsappDigits}`}>
+                      <MessageCircle className="mr-2 h-5 w-5" />
+                      Ligar agora
+                    </a>
+                  </Button>
+                </div>
               ) : (
                 <Card className="border-dashed bg-muted/40 p-4">
                   <div className="flex items-start gap-3">
@@ -235,8 +250,7 @@ function TechnicianProfilePage() {
                     <div className="flex-1">
                       <p className="font-medium">Contacto bloqueado</p>
                       <p className="mt-1 text-sm text-muted-foreground">
-                        Este técnico ainda não tem uma assinatura activa.
-                        Após a activação, o WhatsApp ficará visível aqui.
+                        Este técnico ainda não foi credenciado. Após o pagamento e credenciamento, o WhatsApp e o número de chamada ficarão visíveis aqui.
                       </p>
                       <Button
                         asChild
