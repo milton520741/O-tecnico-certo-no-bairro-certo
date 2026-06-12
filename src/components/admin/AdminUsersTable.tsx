@@ -145,15 +145,27 @@ export function AdminUsersTable() {
                 </div>
 
                 <div className="mt-4 grid grid-cols-1 gap-2">
-                  <Button
-                    size="sm"
-                    className="w-full bg-success text-success-foreground hover:bg-success/90"
-                    disabled={user.is_banned || isCredentialed(user) || credentialMutation.isPending}
-                    onClick={() => credentialMutation.mutate(user)}
-                    title="Verifica o utilizador e ativa o Premium para mostrar WhatsApp"
-                  >
-                    {isCredentialed(user) ? 'Credenciado' : 'Credenciar e ativar WhatsApp'}
-                  </Button>
+                  {isCredentialed(user) ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full border-destructive text-destructive hover:bg-destructive/10"
+                      disabled={user.is_banned || revokeMutation.isPending}
+                      onClick={() => revokeMutation.mutate(user)}
+                    >
+                      Cancelar credenciamento
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      className="w-full bg-success text-success-foreground hover:bg-success/90"
+                      disabled={user.is_banned || credentialMutation.isPending}
+                      onClick={() => credentialMutation.mutate(user)}
+                      title="Verifica o utilizador e ativa o Premium para mostrar WhatsApp"
+                    >
+                      Credenciar e ativar WhatsApp
+                    </Button>
+                  )}
                   <Button
                     size="sm"
                     variant="outline"
