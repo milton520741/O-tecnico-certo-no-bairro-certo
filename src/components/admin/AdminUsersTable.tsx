@@ -41,6 +41,11 @@ export function AdminUsersTable() {
   const [banReason, setBanReason] = useState('');
   const queryClient = useQueryClient();
 
+  const getUserName = (user: AdminUser) => user.full_name || user.company_name || 'N/A';
+
+  const isCredentialed = (user: any) =>
+    user.is_verified && (user.type !== 'technician' || user.is_premium);
+
   // Fetch users
   const { data: users = [], isLoading } = useQuery({
     queryKey: ['admin-users'],
@@ -108,7 +113,54 @@ export function AdminUsersTable() {
         <CardHeader>
           <CardTitle>Gestão de Utilizadores</CardTitle>
         </CardHeader>
-        <CardContent className="overflow-x-auto">
+        <CardContent>
+          <div className="space-y-3 md:hidden">
+            {users.map((user: any) => (
+              <div key={user.id} className="rounded-lg border bg-card p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-medium">{getUserName(user)}</p>
+                    <p className="text-sm text-muted-foreground">{user.id.slice(0, 8)}...</p>
+                  </div>
+                  <Badge variant="outline">
+                    {user.type === 'technician' ? 'Técnico' : 'Empresa'}
+                  </Badge>
+                </div>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {user.is_verified ? <Badge>Verificado</Badge> : <Badge variant="secondary">Não verificado</Badge>}
+                  {user.is_premium ? <Badge>Premium</Badge> : <Badge variant="secondary">Básico</Badge>}
+                  {user.is_banned ? <Badge variant="destructive">Banido</Badge> : <Badge variant="default">Ativo</Badge>}
+                </div>
+
+                <div className="mt-4 grid grid-cols-1 gap-2">
+                  <Button
+                    size="sm"
+                    className="w-full bg-success text-success-foreground hover:bg-success/90"
+                    disabled={user.is_banned || isCredentialed(user) || credentialMutation.isPending}
+                    onClick={() => credentialMutation.mutate(user)}
+                    title="Verifica o utilizador e ativa o Premium para mostrar WhatsApp"
+                  >
+                    {isCredentialed(user) ? 'Credenciado' : 'Credenciar e ativar WhatsApp'}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full"
+                    disabled={user.is_banned}
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setShowBanDialog(true);
+                    }}
+                  >
+                    {user.is_banned ? 'Banido' : 'Banir'}
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="hidden overflow-x-auto md:block">
           <Table className="min-w-[720px]">
             <TableHeader>
               <TableRow>
@@ -124,7 +176,7 @@ export function AdminUsersTable() {
             <TableBody>
               {users.map((user: any) => (
                 <TableRow key={user.id}>
-                  <TableCell>{user.full_name || user.company_name || 'N/A'}</TableCell>
+                  <TableCell>{getUserName(user)}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">{user.id.slice(0, 8)}...</TableCell>
                   <TableCell>
                     <Badge variant="outline">
@@ -157,11 +209,12 @@ export function AdminUsersTable() {
                       <Button
                         size="sm"
                         variant="default"
-                        disabled={user.is_banned || (user.is_verified && (user.type !== 'technician' || user.is_premium)) || credentialMutation.isPending}
+                        className="bg-success text-success-foreground hover:bg-success/90"
+                        disabled={user.is_banned || isCredentialed(user) || credentialMutation.isPending}
                         onClick={() => credentialMutation.mutate(user)}
                         title="Verifica o utilizador e ativa o Premium (mostra WhatsApp)"
                       >
-                        {user.is_verified && (user.type !== 'technician' || user.is_premium) ? 'Credenciado' : 'Credenciar'}
+                        {isCredentialed(user) ? 'Credenciado' : 'Credenciar'}
                       </Button>
                       <Button
                         size="sm"
@@ -180,6 +233,7 @@ export function AdminUsersTable() {
               ))}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
 
