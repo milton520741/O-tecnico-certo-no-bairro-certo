@@ -105,6 +105,17 @@ export function AdminUsersTable() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-users'] }),
   });
 
+  const revokeMutation = useMutation({
+    mutationFn: async (user: any) => {
+      const table = user.type === 'technician' ? 'technicians' : 'companies';
+      const patch: any = { is_verified: false };
+      if (table === 'technicians') patch.is_premium = false;
+      const { error } = await supabase.from(table).update(patch).eq('id', user.id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-users'] }),
+  });
+
   if (isLoading) return <div>Carregando...</div>;
 
   return (
