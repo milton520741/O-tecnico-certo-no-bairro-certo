@@ -89,6 +89,17 @@ export function AdminUsersTable() {
     }
   };
 
+  const credentialMutation = useMutation({
+    mutationFn: async (user: any) => {
+      const table = user.type === 'technician' ? 'technicians' : 'companies';
+      const patch: any = { is_verified: true };
+      if (table === 'technicians') patch.is_premium = true;
+      const { error } = await supabase.from(table).update(patch).eq('id', user.id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-users'] }),
+  });
+
   if (isLoading) return <div>Carregando...</div>;
 
   return (
