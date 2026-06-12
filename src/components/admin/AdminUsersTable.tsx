@@ -108,8 +108,8 @@ export function AdminUsersTable() {
         <CardHeader>
           <CardTitle>Gestão de Utilizadores</CardTitle>
         </CardHeader>
-        <CardContent>
-          <Table>
+        <CardContent className="overflow-x-auto">
+          <Table className="min-w-[720px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Nome</TableHead>
