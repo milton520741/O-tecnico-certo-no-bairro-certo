@@ -254,27 +254,6 @@ function AdminDashboard() {
 
       {/* Action Widgets */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Activation Requests */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-green-600" />
-              Ativação de Contatos
-              {stats?.payments ? (
-                <Badge variant="default">{stats.payments}</Badge>
-              ) : null}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-3">Verificar e ativar contatos após pagamento confirmado</p>
-            <Link to="/admin/activation">
-              <Button className="w-full bg-green-600 hover:bg-green-700">
-                Gerenciar Ativações →
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-
         {/* Pending Subscriptions */}
         <Card>
           <CardHeader>

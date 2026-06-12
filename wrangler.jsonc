@@ -1,22 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "account_id": "09312f13fe4f261f7e6e9bb089151322",
   "name": "otecnicocertonobairrocerto",
   "main": "src/server.ts",
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
     "NODE_ENV": "production"
-  },
-  "build": {
-    "command": "npm run build"
-  },
-  "alias": {
-    "tanstack-start-injected-head-scripts:v": "./src/lib/empty.ts",
-    "tanstack-start-injected-scripts:v": "./src/lib/empty.ts",
-    "#tanstack-router-entry": "./src/lib/empty.ts",
-    "#tanstack-start-entry": "./src/lib/empty.ts",
-    "tanstack-start-manifest:v": "./src/lib/empty.ts"
   },
   "env": {
     "production": {
