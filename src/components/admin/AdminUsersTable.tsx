@@ -229,16 +229,28 @@ export function AdminUsersTable() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="default"
-                        className="bg-success text-success-foreground hover:bg-success/90"
-                        disabled={user.is_banned || isCredentialed(user) || credentialMutation.isPending}
-                        onClick={() => credentialMutation.mutate(user)}
-                        title="Verifica o utilizador e ativa o Premium (mostra WhatsApp)"
-                      >
-                        {isCredentialed(user) ? 'Credenciado' : 'Credenciar'}
-                      </Button>
+                      {isCredentialed(user) ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-destructive text-destructive hover:bg-destructive/10"
+                          disabled={user.is_banned || revokeMutation.isPending}
+                          onClick={() => revokeMutation.mutate(user)}
+                        >
+                          Cancelar
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="default"
+                          className="bg-success text-success-foreground hover:bg-success/90"
+                          disabled={user.is_banned || credentialMutation.isPending}
+                          onClick={() => credentialMutation.mutate(user)}
+                          title="Verifica o utilizador e ativa o Premium (mostra WhatsApp)"
+                        >
+                          Credenciar
+                        </Button>
+                      )}
                       <Button
                         size="sm"
                         variant="outline"
