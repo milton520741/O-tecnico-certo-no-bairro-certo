@@ -105,6 +105,17 @@ export function AdminUsersTable() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-users'] }),
   });
 
+  const revokeMutation = useMutation({
+    mutationFn: async (user: any) => {
+      const table = user.type === 'technician' ? 'technicians' : 'companies';
+      const patch: any = { is_verified: false };
+      if (table === 'technicians') patch.is_premium = false;
+      const { error } = await supabase.from(table).update(patch).eq('id', user.id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-users'] }),
+  });
+
   if (isLoading) return <div>Carregando...</div>;
 
   return (
@@ -134,15 +145,27 @@ export function AdminUsersTable() {
                 </div>
 
                 <div className="mt-4 grid grid-cols-1 gap-2">
-                  <Button
-                    size="sm"
-                    className="w-full bg-success text-success-foreground hover:bg-success/90"
-                    disabled={user.is_banned || isCredentialed(user) || credentialMutation.isPending}
-                    onClick={() => credentialMutation.mutate(user)}
-                    title="Verifica o utilizador e ativa o Premium para mostrar WhatsApp"
-                  >
-                    {isCredentialed(user) ? 'Credenciado' : 'Credenciar e ativar WhatsApp'}
-                  </Button>
+                  {isCredentialed(user) ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full border-destructive text-destructive hover:bg-destructive/10"
+                      disabled={user.is_banned || revokeMutation.isPending}
+                      onClick={() => revokeMutation.mutate(user)}
+                    >
+                      Cancelar credenciamento
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      className="w-full bg-success text-success-foreground hover:bg-success/90"
+                      disabled={user.is_banned || credentialMutation.isPending}
+                      onClick={() => credentialMutation.mutate(user)}
+                      title="Verifica o utilizador e ativa o Premium para mostrar WhatsApp"
+                    >
+                      Credenciar e ativar WhatsApp
+                    </Button>
+                  )}
                   <Button
                     size="sm"
                     variant="outline"
@@ -206,16 +229,28 @@ export function AdminUsersTable() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="default"
-                        className="bg-success text-success-foreground hover:bg-success/90"
-                        disabled={user.is_banned || isCredentialed(user) || credentialMutation.isPending}
-                        onClick={() => credentialMutation.mutate(user)}
-                        title="Verifica o utilizador e ativa o Premium (mostra WhatsApp)"
-                      >
-                        {isCredentialed(user) ? 'Credenciado' : 'Credenciar'}
-                      </Button>
+                      {isCredentialed(user) ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-destructive text-destructive hover:bg-destructive/10"
+                          disabled={user.is_banned || revokeMutation.isPending}
+                          onClick={() => revokeMutation.mutate(user)}
+                        >
+                          Cancelar
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="default"
+                          className="bg-success text-success-foreground hover:bg-success/90"
+                          disabled={user.is_banned || credentialMutation.isPending}
+                          onClick={() => credentialMutation.mutate(user)}
+                          title="Verifica o utilizador e ativa o Premium (mostra WhatsApp)"
+                        >
+                          Credenciar
+                        </Button>
+                      )}
                       <Button
                         size="sm"
                         variant="outline"
