@@ -153,17 +153,28 @@ export function AdminUsersTable() {
                     )}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={user.is_banned}
-                      onClick={() => {
-                        setSelectedUser(user);
-                        setShowBanDialog(true);
-                      }}
-                    >
-                      {user.is_banned ? 'Banido' : 'Banir'}
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="default"
+                        disabled={user.is_banned || (user.is_verified && (user.type !== 'technician' || user.is_premium)) || credentialMutation.isPending}
+                        onClick={() => credentialMutation.mutate(user)}
+                        title="Verifica o utilizador e ativa o Premium (mostra WhatsApp)"
+                      >
+                        {user.is_verified && (user.type !== 'technician' || user.is_premium) ? 'Credenciado' : 'Credenciar'}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={user.is_banned}
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setShowBanDialog(true);
+                        }}
+                      >
+                        {user.is_banned ? 'Banido' : 'Banir'}
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
