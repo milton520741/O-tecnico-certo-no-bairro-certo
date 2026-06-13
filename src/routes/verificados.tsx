@@ -101,12 +101,12 @@ function VerifiedDashboard() {
       setServices((sR.data ?? []).map((s: any) => ({ id: String(s.id), name: s.name })));
       setTechs(
         ((tR.data ?? []) as any[])
-          .filter((t) => activeIds.has(t.id))
+          .filter((t) => activeIds.has(t.id) || (t.is_verified && t.is_premium))
           .map((t) => ({ ...t, zoneIds: tzMap.get(t.id) ?? new Set(), serviceIds: tsMap.get(t.id) ?? new Set() }))
       );
       setComps(
         ((cR.data ?? []) as any[])
-          .filter((c) => activeIds.has(c.id))
+          .filter((c) => activeIds.has(c.id) || c.is_verified)
           .map((c) => ({ ...c, zoneIds: czMap.get(c.id) ?? new Set(), serviceIds: csMap.get(c.id) ?? new Set() }))
       );
       setLoading(false);
