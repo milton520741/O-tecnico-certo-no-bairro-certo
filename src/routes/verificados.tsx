@@ -173,7 +173,9 @@ function VerifiedDashboard() {
         {loading ? <SkeletonGrid /> : tSlice.length === 0 ? <EmptyState text="Nenhum técnico encontrado." /> : (
           <>
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {tSlice.map((t) => (
+              {tSlice.map((t) => {
+                const wa = t.phone_whatsapp?.replace(/\D/g, "");
+                return (
                 <Card key={t.id} className={`flex flex-col p-5 transition-smooth hover:-translate-y-1 hover:shadow-elegant ${t.is_premium ? "premium-border bg-gradient-card shadow-premium" : ""}`}>
                   <div className="flex items-start gap-3">
                     <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-secondary">
@@ -193,11 +195,19 @@ function VerifiedDashboard() {
                     </div>
                   </div>
                   {t.bio && <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">{t.bio}</p>}
-                  <Button asChild variant="outline" className="mt-4 w-full">
+                  {wa && (
+                    <Button asChild className="mt-4 w-full bg-success text-success-foreground hover:bg-success/90">
+                      <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener noreferrer">
+                        <MessageCircle className="mr-2 h-4 w-4" />WhatsApp
+                      </a>
+                    </Button>
+                  )}
+                  <Button asChild variant="outline" className="mt-2 w-full">
                     <Link to="/technician/$id" params={{ id: t.id }}>Ver perfil</Link>
                   </Button>
                 </Card>
-              ))}
+                );
+              })}
             </div>
             <Pager page={tPage} pages={tPages} onPage={setTPage} />
           </>
