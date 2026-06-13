@@ -19,7 +19,7 @@ export const Route = createFileRoute("/pendentes")({
 
 interface Tech {
   id: string; full_name: string; profile_photo_url: string | null;
-  years_experience: number | null; is_verified: boolean; bio: string | null;
+  years_experience: number | null; is_verified: boolean; is_premium: boolean; bio: string | null;
   zoneIds: Set<string>; serviceIds: Set<string>;
 }
 interface Comp {
@@ -53,7 +53,7 @@ function PendingDashboard() {
         supabase.from("zones").select("id, name").order("name"),
         supabase.from("services").select("id, name").order("name"),
         supabase.from("technicians")
-          .select("id, full_name, profile_photo_url, years_experience, is_verified, bio, created_at")
+          .select("id, full_name, profile_photo_url, years_experience, is_verified, is_premium, bio, created_at")
           .eq("is_banned", false).order("created_at", { ascending: false }),
         supabase.from("companies")
           .select("id, company_name, logo_url, is_verified, bio, created_at")
@@ -94,12 +94,12 @@ function PendingDashboard() {
       setServices((sR.data ?? []).map((s: any) => ({ id: String(s.id), name: s.name })));
       setTechs(
         ((tR.data ?? []) as any[])
-          .filter((t) => !t.is_verified || !activeIds.has(t.id))
+          .filter((t) => !((t.is_verified && t.is_premium) || activeIds.has(t.id)))
           .map((t) => ({ ...t, zoneIds: tzMap.get(t.id) ?? new Set(), serviceIds: tsMap.get(t.id) ?? new Set() }))
       );
       setComps(
         ((cR.data ?? []) as any[])
-          .filter((c) => !c.is_verified || !activeIds.has(c.id))
+          .filter((c) => !(c.is_verified || activeIds.has(c.id)))
           .map((c) => ({ ...c, zoneIds: czMap.get(c.id) ?? new Set(), serviceIds: csMap.get(c.id) ?? new Set() }))
       );
       setLoading(false);
