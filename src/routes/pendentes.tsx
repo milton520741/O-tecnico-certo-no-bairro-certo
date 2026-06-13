@@ -94,12 +94,12 @@ function PendingDashboard() {
       setServices((sR.data ?? []).map((s: any) => ({ id: String(s.id), name: s.name })));
       setTechs(
         ((tR.data ?? []) as any[])
-          .filter((t) => !t.is_verified || !activeIds.has(t.id))
+          .filter((t) => !((t.is_verified && t.is_premium) || activeIds.has(t.id)))
           .map((t) => ({ ...t, zoneIds: tzMap.get(t.id) ?? new Set(), serviceIds: tsMap.get(t.id) ?? new Set() }))
       );
       setComps(
         ((cR.data ?? []) as any[])
-          .filter((c) => !c.is_verified || !activeIds.has(c.id))
+          .filter((c) => !(c.is_verified || activeIds.has(c.id)))
           .map((c) => ({ ...c, zoneIds: czMap.get(c.id) ?? new Set(), serviceIds: csMap.get(c.id) ?? new Set() }))
       );
       setLoading(false);
