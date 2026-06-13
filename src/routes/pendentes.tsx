@@ -19,7 +19,7 @@ export const Route = createFileRoute("/pendentes")({
 
 interface Tech {
   id: string; full_name: string; profile_photo_url: string | null;
-  years_experience: number | null; is_verified: boolean; bio: string | null;
+  years_experience: number | null; is_verified: boolean; is_premium: boolean; bio: string | null;
   zoneIds: Set<string>; serviceIds: Set<string>;
 }
 interface Comp {
