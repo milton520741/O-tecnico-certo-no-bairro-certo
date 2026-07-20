@@ -14,6 +14,83 @@ export type Database = {
   }
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          client_id: string
+          created_at: string
+          id: number
+          notes: string | null
+          provider_id: string
+          provider_type: string
+          scheduled_for: string
+          service_id: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          id?: number
+          notes?: string | null
+          provider_id: string
+          provider_type: string
+          scheduled_for: string
+          service_id?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          id?: number
+          notes?: string | null
+          provider_id?: string
+          provider_type?: string
+          scheduled_for?: string
+          service_id?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: number
+          is_active: boolean
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          is_active?: boolean
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          is_active?: boolean
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           bio: string | null
@@ -110,6 +187,59 @@ export type Database = {
           },
         ]
       }
+      notification_reads: {
+        Row: {
+          notification_id: number
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          notification_id: number
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          notification_id?: number
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_reads_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          audience: string
+          created_at: string
+          created_by: string | null
+          id: number
+          message: string
+          title: string
+        }
+        Insert: {
+          audience?: string
+          created_at?: string
+          created_by?: string | null
+          id?: number
+          message: string
+          title: string
+        }
+        Update: {
+          audience?: string
+          created_at?: string
+          created_by?: string | null
+          id?: number
+          message?: string
+          title?: string
+        }
+        Relationships: []
+      }
       payment_proofs: {
         Row: {
           created_at: string
@@ -183,6 +313,33 @@ export type Database = {
           },
         ]
       }
+      professions: {
+        Row: {
+          created_at: string
+          id: number
+          is_active: boolean
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          is_active?: boolean
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          is_active?: boolean
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -201,8 +358,87 @@ export type Database = {
         }
         Relationships: []
       }
+      promotions: {
+        Row: {
+          code: string | null
+          created_at: string
+          description: string | null
+          discount_percent: number | null
+          ends_at: string | null
+          id: number
+          is_active: boolean
+          starts_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          description?: string | null
+          discount_percent?: number | null
+          ends_at?: string | null
+          id?: number
+          is_active?: boolean
+          starts_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          description?: string | null
+          discount_percent?: number | null
+          ends_at?: string | null
+          id?: number
+          is_active?: boolean
+          starts_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          admin_response: string | null
+          comment: string | null
+          created_at: string
+          id: number
+          rating: number
+          reviewer_id: string
+          status: string
+          target_owner_id: string
+          target_type: string
+          updated_at: string
+        }
+        Insert: {
+          admin_response?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: number
+          rating: number
+          reviewer_id: string
+          status?: string
+          target_owner_id: string
+          target_type: string
+          updated_at?: string
+        }
+        Update: {
+          admin_response?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: number
+          rating?: number
+          reviewer_id?: string
+          status?: string
+          target_owner_id?: string
+          target_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       services: {
         Row: {
+          category_id: number | null
           created_at: string
           icon: string | null
           id: number
@@ -210,6 +446,7 @@ export type Database = {
           slug: string
         }
         Insert: {
+          category_id?: number | null
           created_at?: string
           icon?: string | null
           id?: number
@@ -217,13 +454,22 @@ export type Database = {
           slug: string
         }
         Update: {
+          category_id?: number | null
           created_at?: string
           icon?: string | null
           id?: number
           name?: string
           slug?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "services_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscriptions: {
         Row: {
