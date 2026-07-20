@@ -99,16 +99,27 @@ function VerifiedDashboard() {
 
       setZones((zR.data ?? []).map((z: any) => ({ id: String(z.id), name: z.name })));
       setServices((sR.data ?? []).map((s: any) => ({ id: String(s.id), name: s.name })));
-      setTechs(
-        ((tR.data ?? []) as any[])
-          .filter((t) => activeIds.has(t.id) || (t.is_verified && t.is_premium))
-          .map((t) => ({ ...t, zoneIds: tzMap.get(t.id) ?? new Set(), serviceIds: tsMap.get(t.id) ?? new Set() }))
+      const techList = ((tR.data ?? []) as any[])
+        .filter((t) => activeIds.has(t.id) || (t.is_verified && t.is_premium))
+        .map((t) => ({ ...t, phone_whatsapp: null as string | null, zoneIds: tzMap.get(t.id) ?? new Set(), serviceIds: tsMap.get(t.id) ?? new Set() }));
+      const compList = ((cR.data ?? []) as any[])
+        .filter((c) => activeIds.has(c.id) || c.is_verified)
+        .map((c) => ({ ...c, phone_whatsapp: null as string | null, zoneIds: czMap.get(c.id) ?? new Set(), serviceIds: csMap.get(c.id) ?? new Set() }));
+
+      // Fetch WhatsApp numbers via gated RPC (subscription/credential check server-side)
+      const ids = [...techList.map((t) => t.id), ...compList.map((c) => c.id)];
+      const phoneEntries = await Promise.all(
+        ids.map(async (id) => {
+          const { data } = await supabase.rpc("get_public_whatsapp", { _owner_id: id });
+          return [id, (data as string | null) ?? null] as const;
+        })
       );
-      setComps(
-        ((cR.data ?? []) as any[])
-          .filter((c) => activeIds.has(c.id) || c.is_verified)
-          .map((c) => ({ ...c, zoneIds: czMap.get(c.id) ?? new Set(), serviceIds: csMap.get(c.id) ?? new Set() }))
-      );
+      const phoneMap = new Map(phoneEntries);
+      techList.forEach((t) => { t.phone_whatsapp = phoneMap.get(t.id) ?? null; });
+      compList.forEach((c) => { c.phone_whatsapp = phoneMap.get(c.id) ?? null; });
+
+      setTechs(techList);
+      setComps(compList);
       setLoading(false);
     })();
   }, []);
