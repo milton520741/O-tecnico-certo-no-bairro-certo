@@ -417,6 +417,7 @@ export type Database = {
     }
     Functions: {
       expire_due_subscriptions: { Args: never; Returns: number }
+      get_public_whatsapp: { Args: { _owner_id: string }; Returns: string }
       has_active_subscription: { Args: { _owner_id: string }; Returns: boolean }
       has_role: {
         Args: {

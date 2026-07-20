@@ -46,7 +46,6 @@ interface Technician {
   full_name: string;
   profile_photo_url: string | null;
   bio: string | null;
-  phone_whatsapp: string | null;
   years_experience: number | null;
   is_verified: boolean;
   is_premium: boolean;
@@ -65,6 +64,7 @@ function TechnicianProfilePage() {
   const [zones, setZones] = useState<string[]>([]);
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
   const [hasActive, setHasActive] = useState(false);
+  const [whatsapp, setWhatsapp] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -74,7 +74,7 @@ function TechnicianProfilePage() {
       const { data: tech } = await supabase
         .from("technicians")
         .select(
-          "id, full_name, profile_photo_url, bio, phone_whatsapp, years_experience, is_verified, is_premium"
+          "id, full_name, profile_photo_url, bio, years_experience, is_verified, is_premium"
         )
         .eq("id", id)
         .eq("is_banned", false)
@@ -126,6 +126,8 @@ function TechnicianProfilePage() {
       setHasActive(
         !!sub && (!sub.end_at || new Date(sub.end_at) > new Date())
       );
+      const { data: waData } = await supabase.rpc("get_public_whatsapp", { _owner_id: id });
+      if (!cancelled) setWhatsapp((waData as string | null) ?? null);
       setLoading(false);
     })();
     return () => {
@@ -143,7 +145,7 @@ function TechnicianProfilePage() {
 
   if (!technician) throw notFound();
 
-  const whatsappDigits = technician.phone_whatsapp?.replace(/\D/g, "") ?? "";
+  const whatsappDigits = whatsapp?.replace(/\D/g, "") ?? "";
   const whatsappLink = whatsappDigits
     ? `https://wa.me/${whatsappDigits}?text=${encodeURIComponent(
         `Olá ${technician.full_name}, vi o seu perfil no EvoluinF e gostaria de um orçamento.`
