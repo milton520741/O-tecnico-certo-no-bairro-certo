@@ -32,9 +32,15 @@ import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminSubscriptionsRouteImport } from './routes/admin.subscriptions'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminServicesRouteImport } from './routes/admin.services'
+import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminReportsRouteImport } from './routes/admin.reports'
+import { Route as AdminPromotionsRouteImport } from './routes/admin.promotions'
+import { Route as AdminProfessionsRouteImport } from './routes/admin.professions'
 import { Route as AdminPaymentProofsRouteImport } from './routes/admin.payment-proofs'
+import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
 import { Route as AdminLogsRouteImport } from './routes/admin.logs'
+import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as AdminAppointmentsRouteImport } from './routes/admin.appointments'
 import { Route as AdminAdminsRouteImport } from './routes/admin.admins'
 
 const VerificadosRoute = VerificadosRouteImport.update({
@@ -152,9 +158,24 @@ const AdminServicesRoute = AdminServicesRouteImport.update({
   path: '/services',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminReviewsRoute = AdminReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminReportsRoute = AdminReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPromotionsRoute = AdminPromotionsRouteImport.update({
+  id: '/promotions',
+  path: '/promotions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProfessionsRoute = AdminProfessionsRouteImport.update({
+  id: '/professions',
+  path: '/professions',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminPaymentProofsRoute = AdminPaymentProofsRouteImport.update({
@@ -162,9 +183,24 @@ const AdminPaymentProofsRoute = AdminPaymentProofsRouteImport.update({
   path: '/payment-proofs',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLogsRoute = AdminLogsRouteImport.update({
   id: '/logs',
   path: '/logs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAppointmentsRoute = AdminAppointmentsRouteImport.update({
+  id: '/appointments',
+  path: '/appointments',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAdminsRoute = AdminAdminsRouteImport.update({
@@ -186,9 +222,15 @@ export interface FileRoutesByFullPath {
   '/technicians': typeof TechniciansRoute
   '/verificados': typeof VerificadosRoute
   '/admin/admins': typeof AdminAdminsRoute
+  '/admin/appointments': typeof AdminAppointmentsRoute
+  '/admin/categories': typeof AdminCategoriesRoute
   '/admin/logs': typeof AdminLogsRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/payment-proofs': typeof AdminPaymentProofsRoute
+  '/admin/professions': typeof AdminProfessionsRoute
+  '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/reports': typeof AdminReportsRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/subscriptions': typeof AdminSubscriptionsRoute
@@ -213,9 +255,15 @@ export interface FileRoutesByTo {
   '/technicians': typeof TechniciansRoute
   '/verificados': typeof VerificadosRoute
   '/admin/admins': typeof AdminAdminsRoute
+  '/admin/appointments': typeof AdminAppointmentsRoute
+  '/admin/categories': typeof AdminCategoriesRoute
   '/admin/logs': typeof AdminLogsRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/payment-proofs': typeof AdminPaymentProofsRoute
+  '/admin/professions': typeof AdminProfessionsRoute
+  '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/reports': typeof AdminReportsRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/subscriptions': typeof AdminSubscriptionsRoute
@@ -243,9 +291,15 @@ export interface FileRoutesById {
   '/technicians': typeof TechniciansRoute
   '/verificados': typeof VerificadosRoute
   '/admin/admins': typeof AdminAdminsRoute
+  '/admin/appointments': typeof AdminAppointmentsRoute
+  '/admin/categories': typeof AdminCategoriesRoute
   '/admin/logs': typeof AdminLogsRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/payment-proofs': typeof AdminPaymentProofsRoute
+  '/admin/professions': typeof AdminProfessionsRoute
+  '/admin/promotions': typeof AdminPromotionsRoute
   '/admin/reports': typeof AdminReportsRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/subscriptions': typeof AdminSubscriptionsRoute
@@ -274,9 +328,15 @@ export interface FileRouteTypes {
     | '/technicians'
     | '/verificados'
     | '/admin/admins'
+    | '/admin/appointments'
+    | '/admin/categories'
     | '/admin/logs'
+    | '/admin/notifications'
     | '/admin/payment-proofs'
+    | '/admin/professions'
+    | '/admin/promotions'
     | '/admin/reports'
+    | '/admin/reviews'
     | '/admin/services'
     | '/admin/settings'
     | '/admin/subscriptions'
@@ -301,9 +361,15 @@ export interface FileRouteTypes {
     | '/technicians'
     | '/verificados'
     | '/admin/admins'
+    | '/admin/appointments'
+    | '/admin/categories'
     | '/admin/logs'
+    | '/admin/notifications'
     | '/admin/payment-proofs'
+    | '/admin/professions'
+    | '/admin/promotions'
     | '/admin/reports'
+    | '/admin/reviews'
     | '/admin/services'
     | '/admin/settings'
     | '/admin/subscriptions'
@@ -330,9 +396,15 @@ export interface FileRouteTypes {
     | '/technicians'
     | '/verificados'
     | '/admin/admins'
+    | '/admin/appointments'
+    | '/admin/categories'
     | '/admin/logs'
+    | '/admin/notifications'
     | '/admin/payment-proofs'
+    | '/admin/professions'
+    | '/admin/promotions'
     | '/admin/reports'
+    | '/admin/reviews'
     | '/admin/services'
     | '/admin/settings'
     | '/admin/subscriptions'
@@ -525,11 +597,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminServicesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/reviews': {
+      id: '/admin/reviews'
+      path: '/reviews'
+      fullPath: '/admin/reviews'
+      preLoaderRoute: typeof AdminReviewsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/reports': {
       id: '/admin/reports'
       path: '/reports'
       fullPath: '/admin/reports'
       preLoaderRoute: typeof AdminReportsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/promotions': {
+      id: '/admin/promotions'
+      path: '/promotions'
+      fullPath: '/admin/promotions'
+      preLoaderRoute: typeof AdminPromotionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/professions': {
+      id: '/admin/professions'
+      path: '/professions'
+      fullPath: '/admin/professions'
+      preLoaderRoute: typeof AdminProfessionsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/payment-proofs': {
@@ -539,11 +632,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPaymentProofsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/notifications': {
+      id: '/admin/notifications'
+      path: '/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AdminNotificationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/logs': {
       id: '/admin/logs'
       path: '/logs'
       fullPath: '/admin/logs'
       preLoaderRoute: typeof AdminLogsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/categories': {
+      id: '/admin/categories'
+      path: '/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AdminCategoriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/appointments': {
+      id: '/admin/appointments'
+      path: '/appointments'
+      fullPath: '/admin/appointments'
+      preLoaderRoute: typeof AdminAppointmentsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/admins': {
@@ -558,9 +672,15 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAdminsRoute: typeof AdminAdminsRoute
+  AdminAppointmentsRoute: typeof AdminAppointmentsRoute
+  AdminCategoriesRoute: typeof AdminCategoriesRoute
   AdminLogsRoute: typeof AdminLogsRoute
+  AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminPaymentProofsRoute: typeof AdminPaymentProofsRoute
+  AdminProfessionsRoute: typeof AdminProfessionsRoute
+  AdminPromotionsRoute: typeof AdminPromotionsRoute
   AdminReportsRoute: typeof AdminReportsRoute
+  AdminReviewsRoute: typeof AdminReviewsRoute
   AdminServicesRoute: typeof AdminServicesRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSubscriptionsRoute: typeof AdminSubscriptionsRoute
@@ -571,9 +691,15 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdminsRoute: AdminAdminsRoute,
+  AdminAppointmentsRoute: AdminAppointmentsRoute,
+  AdminCategoriesRoute: AdminCategoriesRoute,
   AdminLogsRoute: AdminLogsRoute,
+  AdminNotificationsRoute: AdminNotificationsRoute,
   AdminPaymentProofsRoute: AdminPaymentProofsRoute,
+  AdminProfessionsRoute: AdminProfessionsRoute,
+  AdminPromotionsRoute: AdminPromotionsRoute,
   AdminReportsRoute: AdminReportsRoute,
+  AdminReviewsRoute: AdminReviewsRoute,
   AdminServicesRoute: AdminServicesRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSubscriptionsRoute: AdminSubscriptionsRoute,

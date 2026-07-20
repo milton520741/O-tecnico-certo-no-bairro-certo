@@ -54,8 +54,15 @@ function AdminLayout() {
           <AdminNavLink to="/admin" label="Dashboard" open={sidebarOpen} />
           <AdminNavLink to="/admin/users" label="Utilizadores" open={sidebarOpen} />
           <AdminNavLink to="/admin/subscriptions" label="Assinaturas" open={sidebarOpen} />
+          <AdminNavLink to="/admin/payment-proofs" label="Comprovativos" open={sidebarOpen} />
+          <AdminNavLink to="/admin/professions" label="Profissões" open={sidebarOpen} />
+          <AdminNavLink to="/admin/categories" label="Categorias" open={sidebarOpen} />
           <AdminNavLink to="/admin/services" label="Serviços" open={sidebarOpen} />
           <AdminNavLink to="/admin/zones" label="Bairros" open={sidebarOpen} />
+          <AdminNavLink to="/admin/appointments" label="Agendamentos" open={sidebarOpen} />
+          <AdminNavLink to="/admin/reviews" label="Avaliações" open={sidebarOpen} />
+          <AdminNavLink to="/admin/promotions" label="Promoções" open={sidebarOpen} />
+          <AdminNavLink to="/admin/notifications" label="Notificações" open={sidebarOpen} />
           <AdminNavLink to="/admin/reports" label="Denúncias" open={sidebarOpen} />
           <AdminNavLink to="/admin/logs" label="Registos" open={sidebarOpen} />
           {context.isSuperAdmin && (
