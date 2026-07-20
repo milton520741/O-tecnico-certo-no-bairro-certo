@@ -58,11 +58,11 @@ function VerifiedDashboard() {
         supabase.from("zones").select("id, name").order("name"),
         supabase.from("services").select("id, name").order("name"),
         supabase.from("technicians")
-          .select("id, full_name, profile_photo_url, years_experience, is_verified, is_premium, bio, phone_whatsapp, created_at")
+          .select("id, full_name, profile_photo_url, years_experience, is_verified, is_premium, bio, created_at")
           .eq("is_banned", false).eq("is_verified", true)
           .order("is_premium", { ascending: false }).order("created_at", { ascending: false }),
         supabase.from("companies")
-          .select("id, company_name, logo_url, is_verified, bio, phone_whatsapp, created_at")
+          .select("id, company_name, logo_url, is_verified, bio, created_at")
           .eq("is_banned", false).eq("is_verified", true)
           .order("created_at", { ascending: false }),
         supabase.from("technician_zones").select("technician_id, zone_id"),
